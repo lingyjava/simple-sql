@@ -3,12 +3,14 @@ package com.lingyuan.simplesql.ui;
 import com.lingyuan.simplesql.server.SqlGenerator;
 import com.lingyuan.simplesql.server.impl.SqlGeneratorExcel;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -17,6 +19,7 @@ import javafx.stage.Stage;
 import java.awt.*;
 import java.io.File;
 import java.util.Map;
+import java.util.Objects;
 
 public class MainApp extends Application {
 
@@ -24,8 +27,8 @@ public class MainApp extends Application {
     private final SqlGenerator sqlGenerator = new SqlGeneratorExcel();
     private File outputFile;
 
-    @Override
-    public void start(Stage primaryStage) {
+    // @Override
+    public void start1(Stage primaryStage) {
         Button uploadBtn = new Button("上传Excel文件");
         Label fileLabel = new Label("未选择文件");
         Button generateBtn = new Button("咻～～～（生成SQL）");
@@ -127,5 +130,55 @@ public class MainApp extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    // @Override
+    public void start2(Stage primaryStage) {
+        // 创建 TabPane 用于多功能页面切换
+        TabPane tabPane = new TabPane();
+        // 设置标签页不可关闭（不显示关闭按钮）
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+
+        // 功能1：Excel转SQL
+        // 垂直布局，间距10
+        VBox excelPage = new VBox(10); // 垂直布局，间距10
+        excelPage.setPadding(new Insets(20)); // 页面内边距
+        excelPage.getChildren().add(new Label("Excel转SQL页面")); // 页面标题
+        excelPage.getChildren().add(new Button("上传Excel")); // 上传按钮
+        Tab tab1 = new Tab("Excel转SQL", excelPage); // 创建标签页
+
+        // 功能2：表单生成SELECT页面
+        VBox selectPage = new VBox(10);
+        selectPage.setPadding(new Insets(20));
+        selectPage.getChildren().add(new Label("表单生成SELECT页面"));
+        selectPage.getChildren().add(new TextField("输入表名")); // 输入表名
+        selectPage.getChildren().add(new Button("生成SELECT")); // 生成按钮
+        Tab tab2 = new Tab("表单生成SELECT", selectPage);
+
+        // 功能3：建表语句导入页面
+        VBox importPage = new VBox(10);
+        importPage.setPadding(new Insets(20));
+        importPage.getChildren().add(new Label("建表语句导入页面"));
+        importPage.getChildren().add(new TextArea("粘贴建表SQL")); // 粘贴建表语句
+        importPage.getChildren().add(new Button("导入表结构")); // 导入按钮
+        Tab tab3 = new Tab("建表导入", importPage);
+
+        // 将所有标签页添加到 TabPane
+        tabPane.getTabs().addAll(tab1, tab2, tab3);
+
+        // 创建场景，设置窗口大小
+        Scene scene = new Scene(tabPane, 600, 400);
+        primaryStage.setTitle("Simple SQL 多功能页面"); // 设置窗口标题
+        primaryStage.setScene(scene); // 设置场景
+        primaryStage.show(); // 显示窗口
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        // 加载主界面FXML
+        Scene scene = new Scene(FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/views/MainView.fxml"))));
+        stage.setTitle("Simple SQL 多功能页面");
+        stage.setScene(scene);
+        stage.show();
     }
 }

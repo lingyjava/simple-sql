@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.lingyuan.simplesql.ui.controller.ExcelToSQLViewController"
+            prefHeight="400.0" prefWidth="600.0">
+    <center>
+        <VBox spacing="10" alignment="CENTER" layoutX="20" layoutY="20">
+            <HBox spacing="10">
+                <Label text="操作的表名：" />
+                <TextField fx:id="tableNameField" promptText="输入表名" />
+<!--                <Label text="❓" />-->
+            </HBox>
+<!--            <Button text="生成SQL" fx:id="generateBtn" />-->
+        </VBox>
+    </center>
+</BorderPane>
