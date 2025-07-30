@@ -1,18 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.lingyuan.simplesql.ui.controller.ExcelToSQLViewController"
             prefHeight="400.0" prefWidth="600.0">
     <center>
-        <VBox spacing="10" alignment="CENTER" layoutX="20" layoutY="20">
-            <HBox spacing="10">
-                <Label text="操作的表名：" />
-                <TextField fx:id="tableNameField" promptText="输入表名" />
-<!--                <Label text="❓" />-->
+        <VBox spacing="20">
+            <padding>
+                <Insets top="30.0" right="30.0" bottom="30.0" left="30.0"/>
+            </padding>
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <Label text="数据库表名:"/>
+                <TextField fx:id="tableNameField" promptText="请输入表名"/>
             </HBox>
-<!--            <Button text="生成SQL" fx:id="generateBtn" />-->
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <Label text="生成语句类型:"/>
+                <ComboBox fx:id="sqlTypeComboBox">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="SELECT"/>
+                            <String fx:value="INSERT"/>
+                            <String fx:value="UPDATE"/>
+                            <String fx:value="DELETE"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+            </HBox>
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <Label text="条件列数:"/>
+                <TextField fx:id="conditionColumnCountField" promptText="请输入数字"/>
+            </HBox>
+            <HBox spacing="20">
+                <Button text="上传Excel文件" fx:id="uploadBtn"/>
+            </HBox>
+            <HBox spacing="20">
+                <Label text="输入文件：未选择" fx:id="fileLabel"/>
+            </HBox>
+            <HBox spacing="10">
+                <Button text="咻～～～（生成SQL）" fx:id="generateBtn" disable="true"/>
+            </HBox>
+            <HBox spacing="10">
+                <Label text="输出路径：未生成" fx:id="outputPathLabel"/>
+            </HBox>
+            <HBox spacing="20">
+                <Button text="打开所在文件夹" fx:id="openFolderBtn" disable="true"/>
+                <Button text="打开文件" fx:id="openFileBtn" disable="true"/>
+            </HBox>
         </VBox>
     </center>
 </BorderPane>

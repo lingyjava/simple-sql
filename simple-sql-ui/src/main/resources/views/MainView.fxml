@@ -1,41 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane xmlns="http://javafx.com/javafx"
+<BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.lingyuan.simplesql.ui.controller.MainViewController"
-            prefHeight="400.0" prefWidth="600.0">
-
-    <BorderPane>
-        <center>
-            <TabPane fx:id="mainTabPane">
-                <tabs>
-                    <Tab fx:id="excelTab" text="Excel转SQL"/>
-                    <Tab fx:id="importTab" text="导入表"/>
-                </tabs>
-            </TabPane>
-        </center>
-    </BorderPane>
-<!--    &lt;!&ndash; 主布局使用 BorderPane，顶部放切换按钮，中心显示页面内容 &ndash;&gt;-->
-<!--    <BorderPane>-->
-<!--        <TabPane fx:id="mainTabPane">-->
-<!--            <tabs>-->
-<!--                <Tab fx:id="excelTab" text="Excel转SQL"/>-->
-<!--                <Tab fx:id="importTab" text="导入表"/>-->
-<!--            </tabs>-->
-<!--        </TabPane>-->
-<!--        <top>-->
-<!--            <HBox spacing="10" alignment="CENTER_LEFT">-->
-<!--                &lt;!&ndash; 切换按钮，value属性用于标识要加载的FXML路径 &ndash;&gt;-->
-<!--                <Button text="Excel转SQL" onAction="#showExcelToSQLView"/>-->
-<!--                <Button text="导入表" onAction="#showImportTableView"/>-->
-<!--                <ToggleButton text="Excel转SQL" fx:id="excelToggle" toggleGroup="$group"/>-->
-<!--                <ToggleButton text="导入表" fx:id="importToggle" toggleGroup="$group"/>-->
-<!--            </HBox>-->
-<!--        </top>-->
-<!--        <center>-->
-<!--            &lt;!&ndash; 页面内容容器，切换时加载不同页面 &ndash;&gt;-->
-<!--            <StackPane fx:id="contentPane"/>-->
-<!--        </center>-->
-<!--    </BorderPane>-->
-</AnchorPane>
+            prefHeight="450.0" prefWidth="500.0">
+    <top>
+        <MenuBar AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" stylesheets="/styles/main.css">
+            <Menu text="𝑺𝒊𝒎𝒑𝒍𝒆 𝑺𝑸𝑳">
+                <MenuItem text="退出" onAction="#handleExit"/>
+            </Menu>
+            <Menu text="帮助">
+                <MenuItem text="Github地址" onAction="#openGithub"/>
+                <MenuItem text="使用手册" onAction="#openManual"/>
+                <MenuItem text="提交Bug" onAction="#openSubmitBug"/>
+                <MenuItem text="关于" onAction="#openAbout"/>
+            </Menu>
+        </MenuBar>
+    </top>
+    <center>
+        <TabPane fx:id="mainTabPane" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <Tab fx:id="excelToSQLTab" text="Excel转SQL"/>
+            <Tab fx:id="importTableTab" text="导入表" disable="true"/>
+        </TabPane>
+    </center>
+</BorderPane>

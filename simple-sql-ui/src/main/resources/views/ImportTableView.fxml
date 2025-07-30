@@ -6,12 +6,9 @@
             fx:controller="com.lingyuan.simplesql.ui.controller.ImportTableViewController"
             prefHeight="400.0" prefWidth="600.0">
     <VBox spacing="10" layoutX="20" layoutY="20">
-        <Label text="导入表" style="-fx-font-size: 18px;" />
+        <Label text="导入" style="-fx-font-size: 18px;" />
         <HBox spacing="10">
             <Label text="选择文件：" />
-<!--            <TextField fx:id="filePathField" promptText="文件路径" />-->
-<!--            <Button text="浏览" fx:id="browseBtn" />-->
         </HBox>
-<!--        <Button text="导入" fx:id="importBtn" />-->
     </VBox>
 </AnchorPane>
