@@ -35,7 +35,21 @@ public class ExcelToSQLViewController {
         generateBtn.setDisable(true);
         openFolderBtn.setDisable(true);
         openFileBtn.setDisable(true);
+        conditionColumnCountField.setDisable(true);
         sqlTypeComboBox.getSelectionModel().selectFirst(); // 默认选中第一个类型
+
+        // SQL类型下拉框事件处理
+        sqlTypeComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                // 如果是 UPDATE 或 DELETE 类型，启用条件列数输入框
+                if (SQLTypeEnum.UPDATE.getName().equalsIgnoreCase(newVal) || SQLTypeEnum.DELETE.getName().equalsIgnoreCase(newVal)) {
+                    conditionColumnCountField.setDisable(false);
+                } else {
+                    conditionColumnCountField.setDisable(true);
+                    conditionColumnCountField.clear();
+                }
+            }
+        });
 
         // 上传按钮事件处理
         uploadBtn.setOnAction(e -> {

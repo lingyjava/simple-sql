@@ -6,6 +6,10 @@ import com.lingyuan.simplesql.common.util.ValidationUtil;
 import com.lingyuan.simplesql.domain.dto.SqlGeneratorParam;
 import com.lingyuan.simplesql.domain.enums.SQLTypeEnum;
 import com.lingyuan.simplesql.server.SqlGenerator;
+import com.lingyuan.simplesql.server.handler.GenerateDeleteHandler;
+import com.lingyuan.simplesql.server.handler.GenerateInsertHandler;
+import com.lingyuan.simplesql.server.handler.GenerateSelectHandler;
+import com.lingyuan.simplesql.server.handler.GenerateUpdateHandler;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,197 +65,16 @@ public class SqlGeneratorExcelImpl implements SqlGenerator {
         // 生成SQL语句
         String sql;
         switch (param.getSqlType().toLowerCase()) {
-            case "insert" -> sql = generateInsertSql(rows, header, param.getTableName());
-            case "update" -> sql = generateUpdateSql(rows, header, param.getWhereColumnCount(), param.getTableName());
-            case "delete" -> sql = generateDeleteSql(rows, header, param.getWhereColumnCount(), param.getTableName());
-            case "select" -> sql = generateSelectSql(rows, header, param.getTableName());
+            case "insert" -> sql = GenerateInsertHandler.getSQL(rows, header, param.getTableName());
+            case "update" -> sql = GenerateUpdateHandler.getSQL(rows, header, param.getWhereColumnCount(), param.getTableName());
+            case "delete" -> sql = GenerateDeleteHandler.getSQL(rows, header, param.getWhereColumnCount(), param.getTableName());
+            case "select" -> sql = GenerateSelectHandler.getSQL(rows, header, param.getTableName());
             default -> throw new BusinessException("不支持的SQL类型: " + param.getSqlType());
         }
         // 写入SQL到文件
         String outputFilePath = getDefaultOutputFilePath(param.getSqlType() + "-" + param.getTableName() + "-");
         writeSqlToFile(sql, outputFilePath);
         return outputFilePath;
-    }
-
-    private String generateUpdateSql(List<List<String>> rows, List<String> header, int whereCount, String tableNames) {
-        if (rows.isEmpty() || header.isEmpty()) {
-            throw new BusinessException("行数据或表头不完整，无法生成UPDATE语句");
-        }
-
-        if (whereCount < 1 || whereCount >= header.size()) {
-            throw new BusinessException("WHERE条件数量不正确，必须大于0且小于表头列数");
-        }
-
-        List<String> setColumns = new ArrayList<>();
-        for (int i = whereCount; i < header.size(); i++) {
-            setColumns.add(header.get(i));
-        }
-        if (setColumns.isEmpty()) {
-            throw new BusinessException("没有可更新的列，请检查表头和数据");
-        }
-
-        // 检查set字段值是否都相同
-        boolean allSetEqual = true;
-        List<String> firstSet = new ArrayList<>();
-        for (int i = whereCount; i < header.size(); i++) {
-            firstSet.add(rows.get(0).get(i));
-        }
-        for (List<String> row : rows) {
-            for (int i = 0, j = whereCount; j < header.size(); j++) {
-                if (!firstSet.get(i).equals(row.get(j))) {
-                    allSetEqual = false;
-                    break;
-                }
-                i++;
-            }
-            if (!allSetEqual) break;
-        }
-
-        List<String> sqlList = new ArrayList<>();
-        // 限制条件仅为单列时触发
-        if (allSetEqual && whereCount == 1) {
-            StringBuilder sql = new StringBuilder("UPDATE {tableName}");
-            StringBuilder setClause = new StringBuilder(" SET ");
-            for (int i = 0; i < setColumns.size(); i++) {
-                if (i > 0) setClause.append(", ");
-                setClause.append(setColumns.get(i)).append(" = '").append(firstSet.get(i)).append("'");
-            }
-            StringBuilder whereIn = new StringBuilder();
-            whereIn.append(" WHERE ");
-            for (int i = 0; i < whereCount; i++) {
-                if (i > 0) whereIn.append(" AND ");
-                whereIn.append(header.get(i)).append(" IN (");
-                for (int j = 0; j < rows.size(); j++) {
-                    if (j > 0) whereIn.append(",");
-                    whereIn.append("'").append(rows.get(j).get(i)).append("'");
-                }
-                whereIn.append(")");
-            }
-            sql.append(setClause).append(whereIn).append(";");
-            sqlList.add(sql.toString());
-        } else {
-            for (List<String> row : rows) {
-                StringBuilder sql = new StringBuilder("UPDATE {tableName}");
-                StringBuilder setClause = new StringBuilder( " SET " );
-                int setIdx = 0;
-                for (int i = whereCount; i < header.size(); i++) {
-                    if (setIdx > 0) setClause.append(", ");
-                    setClause.append(header.get(i)).append(" = '").append(row.get(i)).append("'");
-                    setIdx++;
-                }
-                StringBuilder whereClause = new StringBuilder(" WHERE ");
-                for (int i = 0; i < whereCount; i++) {
-                    if (i > 0) whereClause.append(" AND ");
-                    whereClause.append(header.get(i)).append(" = '").append(row.get(i)).append("'");
-                }
-                sql.append(setClause).append(whereClause).append(";");
-                sqlList.add(sql.toString());
-            }
-        }
-        return String.join("\n", replaceTableName(sqlList, tableNames));
-    }
-
-    private List<String> replaceTableName(List<String> sqlList, String tableNames) {
-        List<String> result = new ArrayList<>();
-        String[] tabNames = tableNames.split(",");
-        for (String tabName : tabNames) {
-            for (String sql : sqlList) {
-                String formattedSql = sql.replace("{tableName}", tabName.trim());
-                result.add(formattedSql);
-            }
-        }
-        return result;
-    }
-
-    private String generateInsertSql(List<List<String>> rows, List<String> header, String tableNames) {
-        if (rows.isEmpty() || header.isEmpty()) {
-            throw new BusinessException("行数据或表头不完整，无法生成INSERT语句");
-        }
-        StringBuilder sql = new StringBuilder("INSERT INTO " + "{tableName}" + " (");
-        for (int i = 0; i < header.size(); i++) {
-            if (i > 0) sql.append(", ");
-            sql.append("`").append(header.get(i)).append("`");
-        }
-        sql.append(") VALUES \n");
-        for (int i = 0; i < rows.size(); i++) {
-            if (i > 0) sql.append(", \n");
-            sql.append("(");
-            for (int j = 0; j < rows.get(i).size(); j++) {
-                if (j > 0) sql.append(", ");
-                sql.append("'").append(rows.get(i).get(j)).append("'");
-            }
-            sql.append(")");
-
-        }
-        sql.append(";");
-
-        List<String> sqlList = new ArrayList<>();
-        sqlList.add(sql.toString());
-        return String.join("\n", replaceTableName(sqlList, tableNames));
-    }
-
-    private String generateDeleteSql(List<List<String>> rows, List<String> header, int whereCount, String tableNames) {
-        if (rows.isEmpty() || header.isEmpty()) {
-            throw new BusinessException("行数据或表头不完整，无法生成DELETE语句");
-        }
-        if (whereCount < 1 || whereCount >= header.size()) {
-            throw new BusinessException("WHERE条件数量不正确，必须大于0且小于表头列数");
-        }
-
-        List<String> sqlList = new ArrayList<>();
-        if (whereCount == 1) {
-            // 生成 in 批量 delete
-            StringBuilder sql = new StringBuilder("DELETE FROM {tableName} WHERE ");
-            sql.append(header.get(0)).append(" IN (");
-            for (int i = 0; i < rows.size(); i++) {
-                if (i > 0) sql.append(", ");
-                sql.append("'").append(rows.get(i).get(0)).append("'");
-            }
-            sql.append(");");
-            sqlList.add(sql.toString());
-        } else {
-            // 生成单条 delete
-            for (List<String> row : rows) {
-                StringBuilder sql = new StringBuilder("DELETE FROM {tableName} WHERE ");
-                for (int i = 0; i < whereCount; i++) {
-                    if (i > 0) sql.append(" AND ");
-                    sql.append(header.get(i)).append(" = '").append(row.get(i)).append("'");
-                }
-                sql.append(";");
-                sqlList.add(sql.toString());
-            }
-        }
-        return String.join("\n", replaceTableName(sqlList, tableNames));
-    }
-
-    private String generateSelectSql(List<List<String>> rows, List<String> header, String tableNames) {
-        if (rows.isEmpty() || header.isEmpty()) {
-            throw new BusinessException("行数据或表头不完整，无法生成SELECT语句");
-        }
-        StringBuilder sql = new StringBuilder("SELECT * FROM {tableName} WHERE ");
-        for (int i = 0; i < header.size(); i++) {
-            Set<String> colValues = new HashSet<>();
-            for (List<String> row : rows) {
-                colValues.add(row.get(i));
-            }
-            if (i > 0) sql.append(" AND ");
-            sql.append("`").append(header.get(i)).append("`");
-            if (colValues.size() == 1) {
-                sql.append(" = '").append(rows.get(0).get(i)).append("'");
-            } else {
-                sql.append(" IN (");
-                int idx = 0;
-                for (String val : colValues) {
-                    if (idx++ > 0) sql.append(", ");
-                    sql.append("'").append(val).append("'");
-                }
-                sql.append(")");
-            }
-        }
-        sql.append(";");
-        List<String> sqlList = new ArrayList<>();
-        sqlList.add(sql.toString());
-        return String.join("\n", replaceTableName(sqlList, tableNames));
     }
 
     @Override
