@@ -1,6 +1,7 @@
 package com.lingyuan.simplesql.server.handler;
 
 import com.lingyuan.simplesql.common.exception.BusinessException;
+import com.lingyuan.simplesql.common.util.ExcelParseUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class GenerateDeleteHandler {
             sql.append("`").append(header.get(0)).append("`").append(" IN (");
             for (int i = 0; i < rows.size(); i++) {
                 if (i > 0) sql.append(", ");
-                sql.append("'").append(rows.get(i).get(0)).append("'");
+                sql.append("'").append(ExcelParseUtil.getCell(rows.get(i), 0)).append("'");
             }
             sql.append(");");
             sqlList.add(sql.toString());
@@ -35,7 +36,8 @@ public class GenerateDeleteHandler {
                 StringBuilder sql = new StringBuilder("DELETE FROM ").append(tableName).append(" WHERE ");
                 for (int i = 0; i < whereCount; i++) {
                     if (i > 0) sql.append(" AND ");
-                    sql.append("`").append(header.get(i)).append("`").append(" = '").append(row.get(i)).append("'");
+                    sql.append("`").append(header.get(i)).append("`").append(" = ");
+                    sql.append("'").append(ExcelParseUtil.getCell(row, i)).append("'");
                 }
                 sql.append(";");
                 sqlList.add(sql.toString());

@@ -18,11 +18,6 @@
     </properties>
 
     <dependencies>
-        <!-- Jakarta Validation API -->
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
 
         <!-- Lombok start -->
         <dependency>

@@ -3,14 +3,17 @@ package com.lingyuan.simplesql.ui.controller;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 @Slf4j
 public class MainViewController extends BaseController {
@@ -90,6 +93,40 @@ public class MainViewController extends BaseController {
                         希望能帮助你更轻松地处理SQL相关任务，按时下班！
                         """
         );
+        alert.initOwner(mainTabPane.getScene().getWindow());
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void clearCache() {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("确认清除缓存");
+        confirm.setHeaderText(null);
+        confirm.setContentText("确定要清除所有缓存文件吗？此操作不可恢复。");
+        confirm.initOwner(mainTabPane.getScene().getWindow());
+
+        Optional<ButtonType> result = confirm.showAndWait();
+        if (result.isEmpty() || result.get() != ButtonType.OK) {
+            return; // 用户取消
+        }
+
+        String cacheDirPath = System.getProperty("user.dir") + "/output";
+        File cacheDir = new File(cacheDirPath);
+        int deletedCount = 0;
+        if (cacheDir.exists() && cacheDir.isDirectory()) {
+            File[] files = cacheDir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile() && file.delete()) {
+                        deletedCount++;
+                    }
+                }
+            }
+        }
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("清除缓存");
+        alert.setHeaderText(null);
+        alert.setContentText("已清除 " + deletedCount + " 个缓存文件。");
         alert.initOwner(mainTabPane.getScene().getWindow());
         alert.showAndWait();
     }

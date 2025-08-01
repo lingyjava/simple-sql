@@ -1,6 +1,7 @@
 package com.lingyuan.simplesql.server.handler;
 
 import com.lingyuan.simplesql.common.exception.BusinessException;
+import com.lingyuan.simplesql.common.util.ExcelParseUtil;
 
 import java.util.List;
 
@@ -37,12 +38,7 @@ public class GenerateInsertHandler {
             sql.append("(");
             for (int j = 0; j < rows.get(i).size(); j++) {
                 if (j > 0) sql.append(", ");
-                String data = rows.get(i).get(j);
-                if (data == null || data.isEmpty()) {
-                    sql.append("NULL");
-                } else {
-                    sql.append("'").append(data).append("'");
-                }
+                sql.append("'").append(ExcelParseUtil.getCell(rows.get(i), j)).append("'");
             }
             sql.append(")");
         }

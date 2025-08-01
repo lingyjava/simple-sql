@@ -8,6 +8,7 @@
     <top>
         <MenuBar AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" stylesheets="/styles/main.css">
             <Menu text="𝑺𝒊𝒎𝒑𝒍𝒆 𝑺𝑸𝑳">
+                <MenuItem text="清除缓存" onAction="#clearCache"/>
                 <MenuItem text="退出" onAction="#handleExit"/>
             </Menu>
             <Menu text="帮助">

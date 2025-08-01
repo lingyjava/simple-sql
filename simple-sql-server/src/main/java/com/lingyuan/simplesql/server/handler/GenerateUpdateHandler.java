@@ -1,6 +1,7 @@
 package com.lingyuan.simplesql.server.handler;
 
 import com.lingyuan.simplesql.common.exception.BusinessException;
+import com.lingyuan.simplesql.common.util.ExcelParseUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,15 +40,11 @@ public class GenerateUpdateHandler {
         boolean allSetEqual = true;
         List<String> firstSet = new ArrayList<>();
         for (int i = whereCount; i < header.size(); i++) {
-            firstSet.add(rows.get(0).get(i));
+            firstSet.add(ExcelParseUtil.getCell(rows.get(0), i));
         }
         for (List<String> row : rows) {
             for (int i = 0, j = whereCount; j < header.size(); j++) {
-                // 不比较空值
-                if (firstSet.get(i) == null || row.get(j) == null) {
-                    continue;
-                }
-                if (!firstSet.get(i).equals(row.get(j))) {
+                if (!firstSet.get(i).equals(ExcelParseUtil.getCell(row, j))) {
                     allSetEqual = false;
                     break;
                 }
@@ -64,7 +61,8 @@ public class GenerateUpdateHandler {
             StringBuilder setClause = new StringBuilder(" SET ");
             for (int i = 0; i < setColumns.size(); i++) {
                 if (i > 0) setClause.append(", ");
-                setClause.append("`").append(setColumns.get(i)).append("`").append(" = '").append(firstSet.get(i)).append("'");
+                setClause.append("`").append(setColumns.get(i)).append("`").append(" = ");
+                setClause.append("'").append(firstSet.get(i)).append("'");
             }
             StringBuilder whereIn = new StringBuilder();
             whereIn.append(" WHERE ");
@@ -73,7 +71,7 @@ public class GenerateUpdateHandler {
                 whereIn.append("`").append(header.get(i)).append("`").append(" IN (");
                 for (int j = 0; j < rows.size(); j++) {
                     if (j > 0) whereIn.append(",");
-                    whereIn.append("'").append(rows.get(j).get(i)).append("'");
+                    whereIn.append("'").append(ExcelParseUtil.getCell(rows.get(j), i)).append("'");
                 }
                 whereIn.append(")");
             }
@@ -88,13 +86,15 @@ public class GenerateUpdateHandler {
                 int setIdx = 0;
                 for (int i = whereCount; i < header.size(); i++) {
                     if (setIdx > 0) setClause.append(", ");
-                    setClause.append("`").append(header.get(i)).append("`").append(" = '").append(row.get(i)).append("'");
+                    setClause.append("`").append(header.get(i)).append("`").append(" = ");
+                    setClause.append("'").append(ExcelParseUtil.getCell(row, i)).append("'");
                     setIdx++;
                 }
                 StringBuilder whereClause = new StringBuilder(" WHERE ");
                 for (int i = 0; i < whereCount; i++) {
                     if (i > 0) whereClause.append(" AND ");
-                    whereClause.append("`").append(header.get(i)).append("`").append(" = '").append(row.get(i)).append("'");
+                    whereClause.append("`").append(header.get(i)).append("`").append(" = ");
+                    whereClause.append("'").append(ExcelParseUtil.getCell(row, i)).append("'");
                 }
                 sql.append(setClause).append(whereClause).append(";");
                 sqlList.add(sql.toString());
