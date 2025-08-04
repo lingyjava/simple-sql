@@ -17,7 +17,7 @@ import javafx.scene.control.TextField;
 import java.awt.Desktop;
 import java.io.File;
 
-public class ExcelToSQLViewController {
+public class ExcelToSQLViewController extends BaseController {
 
     @FXML private Button uploadBtn;
     @FXML private Label fileLabel;
@@ -82,10 +82,10 @@ public class ExcelToSQLViewController {
                 }
 
                 SqlGeneratorParam param = new SqlGeneratorParam();
-                param.setExcelPath(selectedFile.getAbsolutePath());
+                param.setFilePath(selectedFile.getAbsolutePath());
                 param.setTableName(tableNameField.getText().trim());
                 param.setSqlType(sqlTypeComboBox.getValue());
-                param.setType("EXCEL");
+                param.setType("EXCEL_TO_SQL");
 
                 if (SQLTypeEnum.UPDATE.getName().equalsIgnoreCase(sqlTypeComboBox.getValue()) || SQLTypeEnum.DELETE.getName().equalsIgnoreCase(sqlTypeComboBox.getValue())) {
                     // 如果是 UPDATE 或 DELETE 类型，条件列数不能为空
@@ -194,16 +194,6 @@ public class ExcelToSQLViewController {
             if (!newVal.matches("\\d*")) {
                 conditionColumnCountField.setText(newVal.replaceAll("\\D", ""));
             }
-        });
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String header, String content) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(type);
-            alert.setTitle(title);
-            alert.setHeaderText(header);
-            alert.setContentText(content);
-            alert.showAndWait();
         });
     }
 

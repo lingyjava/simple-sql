@@ -23,7 +23,7 @@ public class MainViewController extends BaseController {
     @FXML
     private Tab excelToSQLTab;
     @FXML
-    private Tab importTableTab;
+    private Tab sqlRollbackTab;
 
     @FXML
     public void initialize() {
@@ -45,8 +45,8 @@ public class MainViewController extends BaseController {
             try {
                 if (newTab == excelToSQLTab && excelToSQLTab.getContent() == null) {
                     excelToSQLTab.setContent(loadView("/views/ExcelToSQLView.fxml"));
-                } else if (newTab == importTableTab && importTableTab.getContent() == null) {
-                    importTableTab.setContent(loadView("/views/ImportTableView.fxml"));
+                } else if (newTab == sqlRollbackTab && sqlRollbackTab.getContent() == null) {
+                    sqlRollbackTab.setContent(loadView("/views/SqlRollbackView.fxml"));
                 }
             } catch (IOException e) {
                 log.error("Error loading view: {}", newTab, e);
@@ -88,7 +88,7 @@ public class MainViewController extends BaseController {
         alert.setContentText(
                 """
                         开发作者：LingYuan
-                        软件版本：v1.0.0
+                        软件版本：v1.1.0
                         Copyright © 2025 LingYuan
                         希望能帮助你更轻松地处理SQL相关任务，按时下班！
                         """

@@ -24,8 +24,8 @@ public class SqlGeneratorExcelImpl implements SqlGenerator {
         if (param.getTableName() == null || param.getTableName().isEmpty()) {
             throw new BusinessException("表名不能为空");
         }
-        if (param.getExcelPath() == null || param.getExcelPath().isEmpty()) {
-            throw new BusinessException("Excel文件路径不能为空");
+        if (param.getFilePath() == null || param.getFilePath().isEmpty()) {
+            throw new BusinessException("文件路径不能为空");
         }
         if (param.getSqlType() == null || param.getSqlType().isEmpty()) {
             throw new BusinessException("SQL类型不能为空");
@@ -41,7 +41,7 @@ public class SqlGeneratorExcelImpl implements SqlGenerator {
         checkParam(param);
 
         // 读取excel
-        List<List<String>> data = ExcelParseUtil.readExcel(param.getExcelPath());
+        List<List<String>> data = ExcelParseUtil.readExcel(param.getFilePath());
         if (data == null || data.size() < 2) {
             throw new BusinessException("Excel文件格式错误或数据不足，至少需要2行数据");
         }
@@ -64,14 +64,14 @@ public class SqlGeneratorExcelImpl implements SqlGenerator {
             default -> throw new BusinessException("不支持的SQL类型: " + param.getSqlType());
         }
         // 写入SQL到文件
-        String outputFilePath = FileUtil.getDefaultOutputFilePath(param.getSqlType() + "-" + param.getTableName() + "-");
+        String outputFilePath = FileUtil.getDefaultOutputFilePath(param.getSqlType() + "-" + param.getTableName());
         FileUtil.writeStringToFile(sql, outputFilePath);
         return outputFilePath;
     }
 
     @Override
     public String getType() {
-        return "EXCEL";
+        return "EXCEL_TO_SQL";
     }
 
 }

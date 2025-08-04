@@ -25,10 +25,11 @@ public class SqlGeneratorParam implements Serializable {
      * 表名
      */
     private String tableName;
+    
     /**
-     * Excel文件路径
+     * 文件路径
      */
-    private String excelPath;
+    private String filePath;
 
     /**
      * SQL语句类型
