@@ -46,7 +46,7 @@ public class MainViewController extends BaseController {
                 if (newTab == excelToSQLTab && excelToSQLTab.getContent() == null) {
                     excelToSQLTab.setContent(loadView("/views/ExcelToSQLView.fxml"));
                 } else if (newTab == sqlRollbackTab && sqlRollbackTab.getContent() == null) {
-                    sqlRollbackTab.setContent(loadView("/views/SqlRollbackView.fxml"));
+                    // sqlRollbackTab.setContent(loadView("/views/SqlRollbackView.fxml"));
                 }
             } catch (IOException e) {
                 log.error("Error loading view: {}", newTab, e);

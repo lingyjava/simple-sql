@@ -23,6 +23,25 @@
         <javafx.version>21.0.1</javafx.version>
     </properties>
 
+    <!-- 插件管理 -->
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Maven编译器插件 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.10.1</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
     <!-- 依赖版本管理 -->
     <dependencyManagement>
         <dependencies>
