@@ -13,12 +13,10 @@
 ### 优化改进
 
 - 🔧 **项目版本统一**：将所有模块版本更新为1.1.0
-- 📦 **Jar包命名优化**：统一jar包名称为`simple-sql-1.1.0.jar`
+- 📦 **Jar包命名优化**：统一jar包名称为`simple-sql-版本号.jar`
 - 🚀 **智能启动脚本**：添加了跨平台的智能启动脚本
-  - `start.sh` (Linux/macOS) - 支持环境变量检测
-  - `start.bat` (Windows) - 支持环境变量检测
-  - `run.sh` (Linux/macOS) - 基础启动脚本
-  - `run.bat` (Windows) - 基础启动脚本
+  - `start.sh` (Linux/macOS) - 智能启动脚本，支持环境变量检测
+  - `start.bat` (Windows) - 智能启动脚本，支持环境变量检测
 - 📚 **文档完善**：更新了README文档，包含详细的使用说明
 - 🔍 **环境变量支持**：支持`JAVAFX_HOME`和`JAVAFX_SDK_HOME`环境变量
 

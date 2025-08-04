@@ -30,14 +30,14 @@ set JAVAFX_SDK_HOME=C:\path\to\javafx-sdk
 
 如果未设置环境变量，脚本会自动检测以下常见安装路径：
 
-### Linux/macOS
+Linux/macOS：
 
 - `/Library/Java/JavaVirtualMachines/javafx-sdk`
 - `/usr/local/javafx-sdk`
 - `$HOME/javafx-sdk`
 - `/opt/javafx-sdk`
 
-### Windows
+Windows：
 
 - `C:\Program Files\Java\javafx-sdk`
 - `C:\Program Files (x86)\Java\javafx-sdk`
@@ -80,7 +80,7 @@ setx JAVAFX_HOME "C:\javafx-sdk-21.0.7"
 
 运行智能启动脚本，如果检测到JavaFX SDK，会显示：
 
-```
+```text
 ✅ 方式2: 使用jar包运行（检测到JavaFX SDK）
    JavaFX SDK路径: /path/to/javafx-sdk
 ```
