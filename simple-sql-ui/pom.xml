@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.lingyuan</groupId>
         <artifactId>simple-sql</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.1.0</version>
     </parent>
 
     <artifactId>simple-sql-ui</artifactId>
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.lingyuan</groupId>
             <artifactId>simple-sql-server</artifactId>
-            <version>${project.version}</version>
+            <version>1.1.0</version>
         </dependency>
         
         <!-- JavaFX 依赖 start -->
@@ -50,6 +50,16 @@
                 </configuration>
             </plugin>
 
+            <!-- JavaFX Maven 插件 -->
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>com.lingyuan.simplesql.ui.MainApp</mainClass>
+                </configuration>
+            </plugin>
+
             <!-- 打包可执行jar并包含依赖（含JavaFX） -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -64,6 +74,9 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <!-- 自定义jar包名称 -->
+                    <finalName>simple-sql-${project.version}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>

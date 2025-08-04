@@ -4,10 +4,12 @@ import com.lingyuan.simplesql.domain.dto.SqlGeneratorParam;
 import com.lingyuan.simplesql.domain.enums.SQLTypeEnum;
 import com.lingyuan.simplesql.server.impl.SqlGeneratorFactory;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import javafx.scene.control.TextField;
@@ -95,14 +97,71 @@ public class ExcelToSQLViewController {
                     }
                 }
 
-                Object outputPath = SqlGeneratorFactory.getGenerator(param.getType()).generate(param);
+                // 创建自定义进度对话框
+                Dialog<Void> progressDialog = new Dialog<>();
+                progressDialog.setTitle("生成SQL");
+                progressDialog.setHeaderText("正在生成SQL文件...");
+                progressDialog.setResizable(false);
+                
+                // 设置对话框内容
+                VBox content = new VBox(10);
+                content.setPadding(new javafx.geometry.Insets(20));
+                
+                Label statusLabel = new Label("正在处理Excel数据，请稍候...");
+                ProgressBar progressBar = new ProgressBar();
+                progressBar.setProgress(-1); // 不确定进度
+                progressBar.setPrefWidth(300);
+                
+                content.getChildren().addAll(statusLabel, progressBar);
+                progressDialog.getDialogPane().setContent(content);
+                
+                // 添加取消按钮
+                ButtonType cancelButtonType = new ButtonType("取消", ButtonBar.ButtonData.CANCEL_CLOSE);
+                progressDialog.getDialogPane().getButtonTypes().add(cancelButtonType);
+                
+                // 禁用生成按钮，防止重复点击
+                generateBtn.setDisable(true);
 
-                outputFile = new File(outputPath.toString());
-                outputPathLabel.setText("输出路径：" + outputFile.getAbsolutePath());
-                outputPathLabel.setTooltip(new Tooltip("输出路径：" + outputFile.getAbsolutePath()));
-                openFolderBtn.setDisable(false);
-                openFileBtn.setDisable(false);
-                showAlert(Alert.AlertType.INFORMATION, "生成成功", "SQL文件已生成！", outputFile.getAbsolutePath());
+                // 创建后台任务
+                Task<Object> task = new Task<Object>() {
+                    @Override
+                    protected Object call() throws Exception {
+                        // 在后台线程中执行SQL生成
+                        return SqlGeneratorFactory.getGenerator(param.getType()).generate(param);
+                    }
+                };
+
+                // 任务成功完成时的处理
+                task.setOnSucceeded(event -> {
+                    Platform.runLater(() -> {
+                        progressDialog.close();
+                        Object outputPath = task.getValue();
+                        outputFile = new File(outputPath.toString());
+                        outputPathLabel.setText("输出路径：" + outputFile.getAbsolutePath());
+                        outputPathLabel.setTooltip(new Tooltip("输出路径：" + outputFile.getAbsolutePath()));
+                        openFolderBtn.setDisable(false);
+                        openFileBtn.setDisable(false);
+                        generateBtn.setDisable(false); // 重新启用生成按钮
+                        showAlert(Alert.AlertType.INFORMATION, "生成成功", "SQL文件已生成！", outputFile.getAbsolutePath());
+                    });
+                });
+
+                // 任务失败时的处理
+                task.setOnFailed(event -> {
+                    Platform.runLater(() -> {
+                        progressDialog.close();
+                        Throwable exception = task.getException();
+                        generateBtn.setDisable(false); // 重新启用生成按钮
+                        showAlert(Alert.AlertType.ERROR, "生成失败", "SQL文件生成失败！", exception.getMessage());
+                    });
+                });
+
+                // 启动后台任务
+                new Thread(task).start();
+                
+                // 显示进度对话框
+                progressDialog.showAndWait();
+
             } catch (Exception ex) {
                 showAlert(Alert.AlertType.ERROR, "生成失败", "SQL文件生成失败！", ex.getMessage());
             }
