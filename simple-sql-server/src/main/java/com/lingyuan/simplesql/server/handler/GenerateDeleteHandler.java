@@ -8,12 +8,20 @@ import java.util.List;
 
 public class GenerateDeleteHandler {
 
+    /**
+     * 生成DELETE语句
+     * @param rows 行数据
+     * @param header 表头/列名
+     * @param whereCount 条件列数
+     * @param tableName 表名
+     * @return 生成的SQL语句
+     */
     public static String getSQL(List<List<String>> rows, List<String> header, int whereCount, String tableName) {
         if (rows.isEmpty() || header.isEmpty()) {
             throw new BusinessException("行数据或表头不完整，无法生成DELETE语句");
         }
         if (whereCount < 1 || whereCount >= header.size()) {
-            throw new BusinessException("WHERE条件数量不正确，必须大于0且小于表头列数");
+            whereCount = header.size();
         }
         if (tableName == null || tableName.isEmpty()) {
             throw new BusinessException("表名不能为空，无法生成DELETE语句");

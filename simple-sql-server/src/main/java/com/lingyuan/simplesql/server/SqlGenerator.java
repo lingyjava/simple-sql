@@ -2,8 +2,6 @@ package com.lingyuan.simplesql.server;
 
 import com.lingyuan.simplesql.domain.dto.SqlGeneratorParam;
 
-import java.util.Map;
-
 public interface SqlGenerator {
 
     /**
@@ -14,5 +12,10 @@ public interface SqlGenerator {
      */
     Object generate(SqlGeneratorParam param);
 
+
+    /**
+     * 获取SQL生成器类型
+     * @return 类型
+     */
     String getType();
 }

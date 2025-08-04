@@ -3,7 +3,7 @@ package com.lingyuan.simplesql.server.handler;
 import com.lingyuan.simplesql.common.exception.BusinessException;
 import com.lingyuan.simplesql.common.util.ExcelParseUtil;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +29,7 @@ public class GenerateSelectHandler {
         sql.append("FROM `").append(tableName).append("` WHERE ");
 
         for (int i = 0; i < header.size(); i++) {
-            Set<String> colValues = new HashSet<>();
+            Set<String> colValues = new LinkedHashSet<>(); 
             for (List<String> row : rows) {
                 colValues.add(ExcelParseUtil.getCell(row, i));
             }
@@ -46,8 +46,8 @@ public class GenerateSelectHandler {
                 }
                 sql.append(")");
             }
-            sql.append(";");
         }
+        sql.append(";");
         return sql.toString();
     }
 }

@@ -18,16 +18,10 @@
     </properties>
 
     <dependencies>
-        <!-- 参数校验依赖 start -->
-        <!-- Hibernate Validator 实现 -->
         <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <!-- Jakarta Validation API -->
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
+            <groupId>com.lingyuan</groupId>
+            <artifactId>simple-sql-domain</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <!-- EL表达式解析支持，必要 -->
         <dependency>
@@ -58,12 +52,6 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
         <!-- 日志依赖 end -->
-        <!-- Lombok start -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <!-- Lombok end -->
     </dependencies>
 
 </project>
