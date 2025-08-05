@@ -28,6 +28,7 @@ public class ExcelToSQLViewController extends BaseController {
     @FXML private TextField tableNameField;
     @FXML private ComboBox<String> sqlTypeComboBox;
     @FXML private TextField conditionColumnCountField;
+    @FXML private TextField databaseNameField;
 
     private File selectedFile;
     private File outputFile;
@@ -84,6 +85,7 @@ public class ExcelToSQLViewController extends BaseController {
                 SqlGeneratorParam param = new SqlGeneratorParam();
                 param.setFilePath(selectedFile.getAbsolutePath());
                 param.setTableName(tableNameField.getText().trim());
+                param.setDatabaseName(databaseNameField.getText().trim());
                 param.setSqlType(sqlTypeComboBox.getValue());
                 param.setType("EXCEL_TO_SQL");
 

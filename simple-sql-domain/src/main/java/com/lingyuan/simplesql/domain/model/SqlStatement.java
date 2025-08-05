@@ -74,6 +74,19 @@ public class SqlStatement {
         // 解析所有值（可能包含多个VALUES子句，用分号分隔）
         String[] valueGroups = detail2.split(";");
         
+        // 解析表名，可能包含数据库名
+        String databaseName = null;
+        String actualTableName = tableName;
+        
+        // 检查表名是否包含数据库名（用|分隔）
+        if (tableName.contains("|")) {
+            String[] parts = tableName.split("\\|");
+            if (parts.length == 2) {
+                databaseName = parts[0].trim();
+                actualTableName = parts[1].trim();
+            }
+        }
+        
         StringBuilder deleteStatements = new StringBuilder();
         
         for (int groupIndex = 0; groupIndex < valueGroups.length; groupIndex++) {
@@ -110,12 +123,19 @@ public class SqlStatement {
             }
             
             // 生成DELETE语句
-            String deleteStatement = String.format("DELETE FROM `%s` WHERE %s;", tableName, whereClause.toString());
+            StringBuilder deleteStatement = new StringBuilder("DELETE FROM ");
+            
+            // 如果有数据库名，则添加数据库名前缀
+            if (databaseName != null && !databaseName.isEmpty()) {
+                deleteStatement.append("`").append(databaseName).append("`.");
+            }
+            
+            deleteStatement.append("`").append(actualTableName).append("` WHERE ").append(whereClause.toString()).append(";");
             
             if (groupIndex > 0) {
                 deleteStatements.append("\n");
             }
-            deleteStatements.append(deleteStatement);
+            deleteStatements.append(deleteStatement.toString());
         }
         
         return deleteStatements.toString();

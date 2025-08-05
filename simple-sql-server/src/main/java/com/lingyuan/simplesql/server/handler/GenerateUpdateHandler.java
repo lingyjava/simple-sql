@@ -14,9 +14,10 @@ public class GenerateUpdateHandler {
      * @param header 表头/列名
      * @param whereCount WHERE条件列数
      * @param tableName 表名
+     * @param databaseName 数据库名（可选）
      * @return 生成的SQL语句
      */
-    public static String getSQL(List<List<String>> rows, List<String> header, int whereCount, String tableName) {
+    public static String getSQL(List<List<String>> rows, List<String> header, int whereCount, String tableName, String databaseName) {
         if (rows.isEmpty() || header.isEmpty()) {
             throw new BusinessException("行数据或表头不完整，无法生成UPDATE语句");
         }
@@ -57,6 +58,12 @@ public class GenerateUpdateHandler {
         // 批量update （仅为单列where条件且值相同时触发）：因为批量时WHERE用AND拼接，避免多列where条件时可能导致不是想要的结果
         if (allSetEqual && whereCount == 1) {
             StringBuilder sql = new StringBuilder("UPDATE ");
+            
+            // 如果有数据库名，则添加数据库名前缀
+            if (databaseName != null && !databaseName.trim().isEmpty()) {
+                sql.append("`").append(databaseName.trim()).append("`.");
+            }
+            
             sql.append("`").append(tableName).append("`");
             StringBuilder setClause = new StringBuilder(" SET ");
             for (int i = 0; i < setColumns.size(); i++) {
@@ -81,6 +88,12 @@ public class GenerateUpdateHandler {
             // 单行 update
             for (List<String> row : rows) {
                 StringBuilder sql = new StringBuilder("UPDATE ");
+                
+                // 如果有数据库名，则添加数据库名前缀
+                if (databaseName != null && !databaseName.trim().isEmpty()) {
+                    sql.append("`").append(databaseName.trim()).append("`.");
+                }
+                
                 sql.append("`").append(tableName).append("`");
                 StringBuilder setClause = new StringBuilder( " SET " );
                 int setIdx = 0;
@@ -101,5 +114,17 @@ public class GenerateUpdateHandler {
             }
         }
         return String.join("\n", sqlList);
+    }
+
+    /**
+     * 生成UPDATE语句（兼容旧版本）
+     * @param rows 行数据
+     * @param header 表头/列名
+     * @param whereCount WHERE条件列数
+     * @param tableName 表名
+     * @return 生成的SQL语句
+     */
+    public static String getSQL(List<List<String>> rows, List<String> header, int whereCount, String tableName) {
+        return getSQL(rows, header, whereCount, tableName, null);
     }
 }

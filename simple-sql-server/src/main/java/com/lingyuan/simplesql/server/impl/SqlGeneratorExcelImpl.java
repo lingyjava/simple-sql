@@ -80,10 +80,10 @@ public class SqlGeneratorExcelImpl implements SqlGenerator {
         sql.append("\n");
         
         switch (param.getSqlType().toLowerCase()) {
-            case "insert" -> sql.append(GenerateInsertHandler.getSQL(rows, header, param.getTableName()));
-            case "update" -> sql.append(GenerateUpdateHandler.getSQL(rows, header, param.getWhereColumnCount() == null ? 1 : param.getWhereColumnCount(), param.getTableName()));
-            case "delete" -> sql.append(GenerateDeleteHandler.getSQL(rows, header, param.getWhereColumnCount() == null ? header.size() : param.getWhereColumnCount(), param.getTableName()));
-            case "select" -> sql.append(GenerateSelectHandler.getSQL(rows, header, param.getTableName()));
+            case "insert" -> sql.append(GenerateInsertHandler.getSQL(rows, header, param.getTableName(), param.getDatabaseName()));
+            case "update" -> sql.append(GenerateUpdateHandler.getSQL(rows, header, param.getWhereColumnCount() == null ? 1 : param.getWhereColumnCount(), param.getTableName(), param.getDatabaseName()));
+            case "delete" -> sql.append(GenerateDeleteHandler.getSQL(rows, header, param.getWhereColumnCount() == null ? header.size() : param.getWhereColumnCount(), param.getTableName(), param.getDatabaseName()));
+            case "select" -> sql.append(GenerateSelectHandler.getSQL(rows, header, param.getTableName(), param.getDatabaseName()));
             default -> throw new BusinessException("不支持的SQL类型: " + param.getSqlType());
         }
         // 写入SQL到文件

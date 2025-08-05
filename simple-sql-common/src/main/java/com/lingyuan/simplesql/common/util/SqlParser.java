@@ -85,21 +85,64 @@ public class SqlParser {
 
     /**
      * 解析INSERT语句
-     * 支持批量插入和多行语句
+     * 支持批量插入和多行语句，支持数据库名.表名格式，支持反引号包裹
      */
     private static SqlStatement parseInsertStatement(String statement) {
-        // 匹配 INSERT INTO table_name (columns) VALUES (values), (values), ...
+        // 匹配 INSERT INTO `database`.`table` (columns) VALUES (values), (values), ...
+        // 或者 INSERT INTO database.table (columns) VALUES (values), (values), ...
+        // 或者 INSERT INTO `table` (columns) VALUES (values), (values), ...
         // 支持多行和批量插入
         Pattern pattern = Pattern.compile(
-            "INSERT\\s+INTO\\s+`?([^`\\s]+)`?\\s*\\(([^)]+)\\)\\s*VALUES\\s*([^;]+)",
+            "INSERT\\s+INTO\\s+((?:`[^`]+`\\.)?`[^`]+`|[^`\\s]+(?:\\.[^`\\s]+)?)\\s*\\(([^)]+)\\)\\s*VALUES\\s*([^;]+)",
             Pattern.CASE_INSENSITIVE | Pattern.DOTALL
         );
         
         Matcher matcher = pattern.matcher(statement);
         if (matcher.find()) {
-            String tableName = matcher.group(1);
+            String fullTableName = matcher.group(1);
             String columns = matcher.group(2);
             String valuesPart = matcher.group(3);
+            
+            // 解析数据库名和表名
+            String databaseName = null;
+            String tableName = fullTableName;
+            
+            // 处理反引号包裹的情况
+            if (fullTableName.contains("`.")) {
+                // 格式：`database`.`table`
+                Pattern dbTablePattern = Pattern.compile("`([^`]+)`\\.`([^`]+)`");
+                Matcher dbTableMatcher = dbTablePattern.matcher(fullTableName);
+                if (dbTableMatcher.find()) {
+                    databaseName = dbTableMatcher.group(1).trim();
+                    tableName = dbTableMatcher.group(2).trim();
+                }
+            } else if (fullTableName.contains("`") && fullTableName.contains(".")) {
+                // 格式：database.`table` 或 `database`.table
+                Pattern mixedPattern = Pattern.compile("([^`\\s]+)\\.`([^`]+)`");
+                Matcher mixedMatcher = mixedPattern.matcher(fullTableName);
+                if (mixedMatcher.find()) {
+                    databaseName = mixedMatcher.group(1).trim();
+                    tableName = mixedMatcher.group(2).trim();
+                } else {
+                    // 尝试 `database`.table 格式
+                    Pattern mixedPattern2 = Pattern.compile("`([^`]+)`\\.([^`\\s]+)");
+                    Matcher mixedMatcher2 = mixedPattern2.matcher(fullTableName);
+                    if (mixedMatcher2.find()) {
+                        databaseName = mixedMatcher2.group(1).trim();
+                        tableName = mixedMatcher2.group(2).trim();
+                    }
+                }
+            } else if (fullTableName.contains(".")) {
+                // 格式：database.table
+                String[] parts = fullTableName.split("\\.");
+                if (parts.length == 2) {
+                    databaseName = parts[0].trim();
+                    tableName = parts[1].trim();
+                }
+            } else if (fullTableName.startsWith("`") && fullTableName.endsWith("`")) {
+                // 格式：`table`
+                tableName = fullTableName.substring(1, fullTableName.length() - 1).trim();
+            }
             
             // 提取所有VALUES子句用于生成DELETE语句
             // 对于批量插入，我们需要处理所有的值来生成完整的DELETE语句
@@ -118,9 +161,12 @@ public class SqlParser {
             }
             
             if (allValues.length() > 0) {
+                // 如果有数据库名，将其添加到表名中，用特殊分隔符分隔
+                String finalTableName = databaseName != null ? databaseName + "|" + tableName : tableName;
+                
                 return new SqlStatement(
                     SqlStatementType.INSERT,
-                    tableName,
+                    finalTableName,
                     statement,
                     columns,
                     allValues.toString()

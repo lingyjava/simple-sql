@@ -7,7 +7,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.lingyuan.simplesql.ui.controller.ExcelToSQLViewController"
-            prefHeight="600.0" prefWidth="600.0">
+            prefHeight="650.0" prefWidth="600.0">
     <center>
         <VBox spacing="20">
             <padding>
@@ -18,18 +18,24 @@
             <HBox alignment="CENTER" style="-fx-background-color: #f0f8ff; -fx-padding: 15;">
                 <Label text="📊 将Excel文件数据转换为SQL语句" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
             </HBox>
-            
-            <HBox style="-fx-padding: 10;">
-                <Label text="功能: Excel文件中, 第一行填写表的列名, 第二行开始是行数据&#10;&#10;条件列数: UPDATE / DELETE 时将 Excel 前几列作为 WHERE 条件 ?"
-                        style="-fx-font-size: 13px; -fx-text-fill: #7f8c8d;" 
-                        maxWidth="600" 
-                        wrapText="true"/>
+
+            <!-- 功能说明 -->
+            <VBox spacing="10" style="-fx-background-color: #f0f0f0; -fx-padding: 10;">
+                <Label text="功能说明:" style="-fx-font-weight: bold;"/>
+                <Label text="• Excel文件中, 第一行填写表的列名, 第二行开始是行数据"/>
+                <Label text="• 条件列数: UPDATE / DELETE 时将 Excel 前几列作为 WHERE 条件 ?"/>
+            </VBox>
+
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <Label text="数据库库名(非必填):"/>
+                <TextField fx:id="databaseNameField" promptText="请输入数据库库名"/>
             </HBox>
             
             <HBox spacing="20" alignment="CENTER_LEFT">
                 <Label text="数据库表名:"/>
-                <TextField fx:id="tableNameField" promptText="请输入表名"/>
+                <TextField fx:id="tableNameField" promptText="请输入数据库表名"/>                
             </HBox>
+            
             <HBox spacing="20" alignment="CENTER_LEFT">
                 <Label text="语句类型:"/>
                 <ComboBox fx:id="sqlTypeComboBox">
