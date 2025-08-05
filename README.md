@@ -3,7 +3,7 @@
 <div align="center">
   <img src="./simple-sql-ui/src/main/resources/logo/logo.png" alt="Simple SQL Logo" width="100" height="100">
 
-  <p><b>一个简单易用的 SQL 文件生成器</b></p>
+  <p><b>一个简单易用的 SQL 脚本生成器</b></p>
 </div>
 
 ## 功能特性
