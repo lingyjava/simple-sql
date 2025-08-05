@@ -20,7 +20,7 @@ java --version
 echo.
 
 REM Check if jar file exists
-set "JAR_FILE=target\simple-sql-1.1.0.jar"
+set "JAR_FILE=target\simple-sql-1.2.0.jar"
 if not exist "%JAR_FILE%" (
     echo Warning: JAR file not found %JAR_FILE%
     echo Building project...

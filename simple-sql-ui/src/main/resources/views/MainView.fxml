@@ -22,7 +22,7 @@
     <center>
         <TabPane fx:id="mainTabPane" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <Tab fx:id="excelToSQLTab" text="Excel转SQL"/>
-            <Tab fx:id="sqlRollbackTab" text="SQL回退脚本"/>
+            <Tab fx:id="sqlRollbackTab" text="回退脚本生成"/>
             <Tab fx:id="tableDatabaseTab" text="表名库名管理"/>
         </TabPane>
     </center>

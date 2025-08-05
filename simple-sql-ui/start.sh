@@ -27,7 +27,7 @@ if [ ! -f "../pom.xml" ] || ! grep -q "simple-sql-ui" pom.xml; then
 fi
 
 # 检查jar包是否存在
-JAR_FILE="target/simple-sql-1.1.0.jar"
+JAR_FILE="target/simple-sql-1.2.0.jar"
 if [ ! -f "$JAR_FILE" ]; then
     echo "⚠️  警告: 找不到jar包 $JAR_FILE"
     echo "   正在构建项目..."
