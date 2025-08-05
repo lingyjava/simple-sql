@@ -18,6 +18,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * SQL 生成器 - Excel To SQL 实现
+ */
 @Slf4j
 public class SqlGeneratorExcelImpl implements SqlGenerator {
     

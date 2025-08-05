@@ -13,7 +13,8 @@ public class SqlGeneratorFactory {
     }
 
     private static final List<SqlGenerator> GENERATORS = Arrays.asList(
-            new SqlGeneratorExcelImpl()
+            new SqlGeneratorExcelImpl(),
+            new SqlGeneratorRollbackImpl()
             // 可以继续添加其他实现类
     );
 
