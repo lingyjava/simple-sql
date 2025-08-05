@@ -23,6 +23,8 @@ public class MainViewController extends BaseController {
     @FXML
     private Tab excelToSQLTab;
     @FXML
+    private Tab tableDatabaseTab;
+    @FXML
     private Tab sqlRollbackTab;
 
     @FXML
@@ -45,8 +47,10 @@ public class MainViewController extends BaseController {
             try {
                 if (newTab == excelToSQLTab && excelToSQLTab.getContent() == null) {
                     excelToSQLTab.setContent(loadView("/views/ExcelToSQLView.fxml"));
+                } else if (newTab == tableDatabaseTab && tableDatabaseTab.getContent() == null) {
+                    tableDatabaseTab.setContent(loadView("/views/TableDatabaseView.fxml"));
                 } else if (newTab == sqlRollbackTab && sqlRollbackTab.getContent() == null) {
-                    sqlRollbackTab.setContent(loadView("/views/SqlRollbackView.fxml"));
+                    sqlRollbackTab.setContent(loadView("/views/RollbackSQLView.fxml"));
                 }
             } catch (IOException e) {
                 log.error("Error loading view: {}", newTab, e);

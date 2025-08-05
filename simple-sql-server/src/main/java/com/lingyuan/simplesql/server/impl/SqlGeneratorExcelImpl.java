@@ -1,7 +1,7 @@
 package com.lingyuan.simplesql.server.impl;
 
 import com.lingyuan.simplesql.common.exception.BusinessException;
-import com.lingyuan.simplesql.common.util.ExcelParseUtil;
+import com.lingyuan.simplesql.common.util.ExcelParse;
 import com.lingyuan.simplesql.common.util.FileUtil;
 import com.lingyuan.simplesql.common.util.ValidationUtil;
 import com.lingyuan.simplesql.domain.dto.SqlGeneratorParam;
@@ -46,7 +46,7 @@ public class SqlGeneratorExcelImpl implements SqlGenerator {
         checkParam(param);
 
         // 读取excel
-        List<List<String>> data = ExcelParseUtil.readExcel(param.getFilePath());
+        List<List<String>> data = ExcelParse.readExcel(param.getFilePath());
         if (data == null || data.size() < 2) {
             throw new BusinessException("Excel文件格式错误或数据不足，至少需要2行数据");
         }

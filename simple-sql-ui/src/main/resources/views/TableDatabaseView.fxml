@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.lingyuan.simplesql.ui.controller.TableDatabaseViewController"
+            prefHeight="900.0" prefWidth="1100.0" minHeight="700.0" minWidth="900.0">
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="15.0" right="15.0" bottom="15.0" left="15.0"/>
+                </padding>
+
+                <!-- 页面功能描述 -->
+                <HBox alignment="CENTER" style="-fx-background-color: #f0f8ff; -fx-padding: 15;">
+                    <Label text="🗄️ 表名和库名管理" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                </HBox>
+
+                <!-- 功能说明 -->
+                <VBox spacing="10" style="-fx-background-color: #f0f0f0; -fx-padding: 10;">
+                    <Label text="功能说明:" style="-fx-font-weight: bold;"/>
+                    <Label text="• 管理常用的表名和库名，方便在 Excel 转 SQL 时快速选择"/>
+                    <Label text="• 支持添加、删除、搜索表名和库名"/>
+                    <Label text="• 数据将持久化保存在本地 SQLite 数据库中"/>
+                </VBox>
+
+                <!-- 添加新记录区域 -->
+                <VBox spacing="10" style="-fx-background-color: #e8f5e8; -fx-padding: 15;">
+                    <Label text="添加新记录:" style="-fx-font-weight: bold;"/>
+                    <HBox spacing="20" alignment="CENTER_LEFT">
+                        <Label text="表名:"/>
+                        <TextField fx:id="tableNameField" promptText="请输入表名" prefWidth="200"/>
+                    </HBox>
+                    <HBox spacing="20" alignment="CENTER_LEFT">
+                        <Label text="库名:"/>
+                        <TextField fx:id="databaseNameField" promptText="请输入库名（可选）" prefWidth="200"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <Button text="添加" fx:id="addBtn" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                        <Button text="清空" fx:id="clearBtn" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                    </HBox>
+                </VBox>
+
+                <!-- 搜索区域 -->
+                <VBox spacing="10" style="-fx-background-color: #fff3cd; -fx-padding: 15;">
+                    <Label text="搜索记录:" style="-fx-font-weight: bold;"/>
+                    <HBox spacing="20" alignment="CENTER_LEFT">
+                        <Label text="表名搜索:"/>
+                        <TextField fx:id="searchTableNameField" promptText="输入表名关键字" prefWidth="200"/>
+                    </HBox>
+                    <HBox spacing="20" alignment="CENTER_LEFT">
+                        <Label text="库名搜索:"/>
+                        <TextField fx:id="searchDatabaseNameField" promptText="输入库名关键字" prefWidth="200"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <Button text="搜索" fx:id="searchBtn" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                        <Button text="重置" fx:id="resetBtn" style="-fx-background-color: #ff9800; -fx-text-fill: white;"/>
+                    </HBox>
+                </VBox>
+
+                <!-- 数据表格 -->
+                <VBox spacing="10" VBox.vgrow="ALWAYS">
+                    <Label text="数据列表:" style="-fx-font-weight: bold;"/>
+                    <TableView fx:id="tableView" VBox.vgrow="ALWAYS" prefHeight="300">
+                        <columns>
+                            <TableColumn fx:id="idColumn" text="ID" prefWidth="50">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="id"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn fx:id="tableNameColumn" text="表名" prefWidth="200">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="tableName"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn fx:id="databaseNameColumn" text="库名" prefWidth="200">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="databaseName"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn fx:id="createTimeColumn" text="创建时间" prefWidth="150">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="createTime"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn fx:id="updateTimeColumn" text="更新时间" prefWidth="150">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="updateTime"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn fx:id="actionColumn" text="操作" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane> 

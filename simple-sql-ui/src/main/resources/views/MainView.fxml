@@ -4,7 +4,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.lingyuan.simplesql.ui.controller.MainViewController"
-            prefHeight="650.0" prefWidth="600.0">
+            prefHeight="900.0" prefWidth="1000.0" minHeight="700.0" minWidth="800.0">
     <top>
         <MenuBar AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" stylesheets="/styles/main.css">
             <Menu text="𝑺𝒊𝒎𝒑𝒍𝒆 𝑺𝑸𝑳">
@@ -23,6 +23,7 @@
         <TabPane fx:id="mainTabPane" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <Tab fx:id="excelToSQLTab" text="Excel转SQL"/>
             <Tab fx:id="sqlRollbackTab" text="SQL回退脚本"/>
+            <Tab fx:id="tableDatabaseTab" text="表名库名管理"/>
         </TabPane>
     </center>
 </BorderPane>

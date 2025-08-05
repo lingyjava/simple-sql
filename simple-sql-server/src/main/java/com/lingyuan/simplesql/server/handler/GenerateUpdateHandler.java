@@ -1,7 +1,7 @@
 package com.lingyuan.simplesql.server.handler;
 
 import com.lingyuan.simplesql.common.exception.BusinessException;
-import com.lingyuan.simplesql.common.util.ExcelParseUtil;
+import com.lingyuan.simplesql.common.util.ExcelParse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +41,11 @@ public class GenerateUpdateHandler {
         boolean allSetEqual = true;
         List<String> firstSet = new ArrayList<>();
         for (int i = whereCount; i < header.size(); i++) {
-            firstSet.add(ExcelParseUtil.getCell(rows.get(0), i));
+            firstSet.add(ExcelParse.getCell(rows.get(0), i));
         }
         for (List<String> row : rows) {
             for (int i = 0, j = whereCount; j < header.size(); j++) {
-                if (!firstSet.get(i).equals(ExcelParseUtil.getCell(row, j))) {
+                if (!firstSet.get(i).equals(ExcelParse.getCell(row, j))) {
                     allSetEqual = false;
                     break;
                 }
@@ -78,7 +78,7 @@ public class GenerateUpdateHandler {
                 whereIn.append("`").append(header.get(i)).append("`").append(" IN (");
                 for (int j = 0; j < rows.size(); j++) {
                     if (j > 0) whereIn.append(",");
-                    whereIn.append("'").append(ExcelParseUtil.getCell(rows.get(j), i)).append("'");
+                    whereIn.append("'").append(ExcelParse.getCell(rows.get(j), i)).append("'");
                 }
                 whereIn.append(")");
             }
@@ -100,14 +100,14 @@ public class GenerateUpdateHandler {
                 for (int i = whereCount; i < header.size(); i++) {
                     if (setIdx > 0) setClause.append(", ");
                     setClause.append("`").append(header.get(i)).append("`").append(" = ");
-                    setClause.append("'").append(ExcelParseUtil.getCell(row, i)).append("'");
+                    setClause.append("'").append(ExcelParse.getCell(row, i)).append("'");
                     setIdx++;
                 }
                 StringBuilder whereClause = new StringBuilder(" WHERE ");
                 for (int i = 0; i < whereCount; i++) {
                     if (i > 0) whereClause.append(" AND ");
                     whereClause.append("`").append(header.get(i)).append("`").append(" = ");
-                    whereClause.append("'").append(ExcelParseUtil.getCell(row, i)).append("'");
+                    whereClause.append("'").append(ExcelParse.getCell(row, i)).append("'");
                 }
                 sql.append(setClause).append(whereClause).append(";");
                 sqlList.add(sql.toString());

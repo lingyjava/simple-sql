@@ -10,7 +10,7 @@ import com.alibaba.excel.EasyExcel;
 /**
  * 解析Excel工具类
  */
-public class ExcelParseUtil {
+public class ExcelParse {
 
     /**
      * 获取某行第i列，若越界则返回""

@@ -7,68 +7,71 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.lingyuan.simplesql.ui.controller.ExcelToSQLViewController"
-            prefHeight="650.0" prefWidth="600.0">
+            prefHeight="900.0" prefWidth="1000.0" minHeight="700.0" minWidth="800.0">
     <center>
-        <VBox spacing="20">
-            <padding>
-                <Insets top="15.0" right="15.0" bottom="15.0" left="15.0"/>
-            </padding>
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="15.0" right="15.0" bottom="15.0" left="15.0"/>
+                </padding>
 
-            <!-- 页面功能描述 -->
-            <HBox alignment="CENTER" style="-fx-background-color: #f0f8ff; -fx-padding: 15;">
-                <Label text="📊 将Excel文件数据转换为SQL语句" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-            </HBox>
+                <!-- 页面功能描述 -->
+                <HBox alignment="CENTER" style="-fx-background-color: #f0f8ff; -fx-padding: 15;">
+                    <Label text="📊 将Excel文件数据转换为SQL语句" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                </HBox>
 
-            <!-- 功能说明 -->
-            <VBox spacing="10" style="-fx-background-color: #f0f0f0; -fx-padding: 10;">
-                <Label text="功能说明:" style="-fx-font-weight: bold;"/>
-                <Label text="• Excel文件中, 第一行填写表的列名, 第二行开始是行数据"/>
-                <Label text="• 条件列数: UPDATE / DELETE 时将 Excel 前几列作为 WHERE 条件 ?"/>
+                <!-- 功能说明 -->
+                <VBox spacing="10" style="-fx-background-color: #f0f0f0; -fx-padding: 10;">
+                    <Label text="功能说明:" style="-fx-font-weight: bold;"/>
+                    <Label text="• Excel文件中, 第一行填写表的列名, 第二行开始是行数据"/>
+                    <Label text="• 条件列数: UPDATE / DELETE 时将 Excel 前几列作为 WHERE 条件 ?"/>
+                </VBox>
+
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <Label text="数据库库名(非必填):"/>
+                    <TextField fx:id="databaseNameField" promptText="请输入数据库库名"/>
+                </HBox>
+                
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <Label text="数据库表名:"/>
+                    <TextField fx:id="tableNameField" promptText="请输入数据库表名"/>
+                    <Button fx:id="selectTableBtn" text="选择" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                </HBox>
+                
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <Label text="语句类型:"/>
+                    <ComboBox fx:id="sqlTypeComboBox">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="SELECT"/>
+                                <String fx:value="INSERT"/>
+                                <String fx:value="UPDATE"/>
+                                <String fx:value="DELETE"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                </HBox>
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <Label text="条件列数:"/>
+                    <TextField fx:id="conditionColumnCountField" promptText="请输入数字"/>
+                </HBox>
+                <HBox spacing="20">
+                    <Button text="上传Excel文件" fx:id="uploadBtn"/>
+                </HBox>
+                <HBox spacing="20">
+                    <Label text="输入文件：未选择" fx:id="fileLabel"/>
+                </HBox>
+                <HBox spacing="10">
+                    <Button text="咻～～～（生成SQL）" fx:id="generateBtn" disable="true"/>
+                </HBox>
+                <HBox spacing="10">
+                    <Label text="输出路径：未生成" fx:id="outputPathLabel"/>
+                </HBox>
+                <HBox spacing="20">
+                    <Button text="打开所在文件夹" fx:id="openFolderBtn" disable="true"/>
+                    <Button text="打开文件" fx:id="openFileBtn" disable="true"/>
+                </HBox>
             </VBox>
-
-            <HBox spacing="20" alignment="CENTER_LEFT">
-                <Label text="数据库库名(非必填):"/>
-                <TextField fx:id="databaseNameField" promptText="请输入数据库库名"/>
-            </HBox>
-            
-            <HBox spacing="20" alignment="CENTER_LEFT">
-                <Label text="数据库表名:"/>
-                <TextField fx:id="tableNameField" promptText="请输入数据库表名"/>                
-            </HBox>
-            
-            <HBox spacing="20" alignment="CENTER_LEFT">
-                <Label text="语句类型:"/>
-                <ComboBox fx:id="sqlTypeComboBox">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="SELECT"/>
-                            <String fx:value="INSERT"/>
-                            <String fx:value="UPDATE"/>
-                            <String fx:value="DELETE"/>
-                        </FXCollections>
-                    </items>
-                </ComboBox>
-            </HBox>
-            <HBox spacing="20" alignment="CENTER_LEFT">
-                <Label text="条件列数:"/>
-                <TextField fx:id="conditionColumnCountField" promptText="请输入数字"/>
-            </HBox>
-            <HBox spacing="20">
-                <Button text="上传Excel文件" fx:id="uploadBtn"/>
-            </HBox>
-            <HBox spacing="20">
-                <Label text="输入文件：未选择" fx:id="fileLabel"/>
-            </HBox>
-            <HBox spacing="10">
-                <Button text="咻～～～（生成SQL）" fx:id="generateBtn" disable="true"/>
-            </HBox>
-            <HBox spacing="10">
-                <Label text="输出路径：未生成" fx:id="outputPathLabel"/>
-            </HBox>
-            <HBox spacing="20">
-                <Button text="打开所在文件夹" fx:id="openFolderBtn" disable="true"/>
-                <Button text="打开文件" fx:id="openFileBtn" disable="true"/>
-            </HBox>
-        </VBox>
+        </ScrollPane>
     </center>
 </BorderPane>

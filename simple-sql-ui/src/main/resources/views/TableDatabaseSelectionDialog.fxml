@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.lingyuan.simplesql.ui.controller.TableDatabaseSelectionDialogController"
+            prefHeight="700.0" prefWidth="800.0" minHeight="500.0" minWidth="700.0">
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox spacing="15">
+                <padding>
+                    <Insets top="15.0" right="15.0" bottom="15.0" left="15.0"/>
+                </padding>
+
+                <!-- 标题 -->
+                <HBox alignment="CENTER" style="-fx-background-color: #f0f8ff; -fx-padding: 15;">
+                    <Label text="📋 选择表名和库名" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                </HBox>
+
+                <!-- 搜索区域 -->
+                <VBox spacing="10" style="-fx-background-color: #fff3cd; -fx-padding: 15;">
+                    <Label text="搜索:" style="-fx-font-weight: bold;"/>
+                    <HBox spacing="20" alignment="CENTER_LEFT">
+                        <Label text="表名:"/>
+                        <TextField fx:id="searchTableNameField" promptText="输入表名关键字" prefWidth="200"/>
+                    </HBox>
+                    <HBox spacing="20" alignment="CENTER_LEFT">
+                        <Label text="库名:"/>
+                        <TextField fx:id="searchDatabaseNameField" promptText="输入库名关键字" prefWidth="200"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <Button text="搜索" fx:id="searchBtn" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                        <Button text="重置" fx:id="resetBtn" style="-fx-background-color: #ff9800; -fx-text-fill: white;"/>
+                    </HBox>
+                </VBox>
+
+                <!-- 数据表格 -->
+                <VBox spacing="10" VBox.vgrow="ALWAYS">
+                    <Label text="选择记录:" style="-fx-font-weight: bold;"/>
+                    <TableView fx:id="tableView" VBox.vgrow="ALWAYS" prefHeight="250">
+                        <columns>
+                            <TableColumn fx:id="idColumn" text="ID" prefWidth="50">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="id"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn fx:id="tableNameColumn" text="表名" prefWidth="200">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="tableName"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn fx:id="databaseNameColumn" text="库名" prefWidth="200">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="databaseName"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn fx:id="createTimeColumn" text="创建时间" prefWidth="150">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="createTime"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <!-- 提示信息 -->
+                <HBox alignment="CENTER" style="-fx-background-color: #e3f2fd; -fx-padding: 10;">
+                    <Label text="💡 双击记录可直接选择，或点击确定按钮确认选择" style="-fx-font-size: 12px; -fx-text-fill: #1976d2;"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane> 

@@ -1,11 +1,13 @@
 package com.lingyuan.simplesql.ui.controller;
 
+import com.lingyuan.simplesql.common.db.TableDatabaseHelper;
 import com.lingyuan.simplesql.domain.dto.SqlGeneratorParam;
 import com.lingyuan.simplesql.domain.enums.SQLTypeEnum;
 import com.lingyuan.simplesql.server.impl.SqlGeneratorFactory;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,6 +18,7 @@ import javafx.scene.control.TextField;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.util.Optional;
 
 public class ExcelToSQLViewController extends BaseController {
 
@@ -29,6 +32,7 @@ public class ExcelToSQLViewController extends BaseController {
     @FXML private ComboBox<String> sqlTypeComboBox;
     @FXML private TextField conditionColumnCountField;
     @FXML private TextField databaseNameField;
+    @FXML private Button selectTableBtn;
 
     private File selectedFile;
     private File outputFile;
@@ -197,6 +201,61 @@ public class ExcelToSQLViewController extends BaseController {
                 conditionColumnCountField.setText(newVal.replaceAll("\\D", ""));
             }
         });
+
+        // 选择表名按钮事件
+        selectTableBtn.setOnAction(e -> showTableSelectionDialog());
+    }
+
+    /**
+     * 显示表名和库名选择对话框
+     */
+    private void showTableSelectionDialog() {
+        try {
+            // 创建对话框
+            Dialog<TableDatabaseHelper.TableDatabaseInfo> dialog = new Dialog<>();
+            dialog.setTitle("选择表名");
+            dialog.setHeaderText("请选择要使用的表名，将自动填充对应的库名");
+            dialog.setResizable(true);
+            
+            // 加载选择对话框
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/TableDatabaseSelectionDialog.fxml"));
+            javafx.scene.Parent root = loader.load();
+            TableDatabaseSelectionDialogController controller = loader.getController();
+            
+            // 设置对话框内容
+            dialog.getDialogPane().setContent(root);
+            
+            // 添加按钮
+            ButtonType confirmButtonType = new ButtonType("确定", ButtonBar.ButtonData.OK_DONE);
+            ButtonType cancelButtonType = new ButtonType("取消", ButtonBar.ButtonData.CANCEL_CLOSE);
+            dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, cancelButtonType);
+            
+            // 设置结果转换器
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == confirmButtonType) {
+                    return controller.getSelectedInfo();
+                }
+                return null;
+            });
+            
+            // 显示对话框并处理结果
+            Optional<TableDatabaseHelper.TableDatabaseInfo> result = dialog.showAndWait();
+            if (result.isPresent() && result.get() != null) {
+                TableDatabaseHelper.TableDatabaseInfo selectedInfo = result.get();
+                tableNameField.setText(selectedInfo.getTableName());
+                databaseNameField.setText(selectedInfo.getDatabaseName());
+            } else {
+                // 如果对话框是通过双击关闭的，检查controller中是否有选择结果
+                TableDatabaseHelper.TableDatabaseInfo selectedInfo = controller.getSelectedInfo();
+                if (selectedInfo != null) {
+                    tableNameField.setText(selectedInfo.getTableName());
+                    databaseNameField.setText(selectedInfo.getDatabaseName());
+                }
+            }
+            
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "打开选择对话框失败", "无法打开选择对话框", e.getMessage());
+        }
     }
 
 }

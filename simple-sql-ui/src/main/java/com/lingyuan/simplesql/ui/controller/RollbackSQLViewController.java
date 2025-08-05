@@ -16,7 +16,7 @@ import java.io.File;
 /**
  * SQL回退脚本生成界面控制器
  */
-public class SqlRollbackViewController extends BaseController {
+public class RollbackSQLViewController extends BaseController {
 
     @FXML private Button selectFileBtn;
     @FXML private Label fileInfoLabel;

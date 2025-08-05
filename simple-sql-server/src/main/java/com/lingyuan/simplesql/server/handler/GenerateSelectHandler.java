@@ -1,7 +1,7 @@
 package com.lingyuan.simplesql.server.handler;
 
 import com.lingyuan.simplesql.common.exception.BusinessException;
-import com.lingyuan.simplesql.common.util.ExcelParseUtil;
+import com.lingyuan.simplesql.common.util.ExcelParse;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,12 +39,12 @@ public class GenerateSelectHandler {
         for (int i = 0; i < header.size(); i++) {
             Set<String> colValues = new LinkedHashSet<>(); 
             for (List<String> row : rows) {
-                colValues.add(ExcelParseUtil.getCell(row, i));
+                colValues.add(ExcelParse.getCell(row, i));
             }
             if (i > 0) sql.append(" AND ");
             sql.append("`").append(header.get(i)).append("`");
             if (colValues.size() == 1) {
-                sql.append(" = ").append("'").append(ExcelParseUtil.getCell(rows.get(0), i)).append("'");
+                sql.append(" = ").append("'").append(ExcelParse.getCell(rows.get(0), i)).append("'");
             } else {
                 sql.append(" IN (");
                 int idx = 0;
