@@ -14,6 +14,8 @@ import com.lingyuan.simplesql.server.handler.GenerateUpdateHandler;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -55,17 +57,35 @@ public class SqlGeneratorExcelImpl implements SqlGenerator {
         }
 
         // 生成SQL语句
-        String sql;
+        StringBuilder sql = new StringBuilder();
+        // 添加头部注释
+        sql.append("-- ==========================================\n");
+        sql.append("-- Excel 转 SQL 工具\n");
+        sql.append("-- ==========================================\n");
+        sql.append("-- 生成时间: ").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n");
+        sql.append("-- 表名: ").append(param.getTableName()).append("\n");
+        sql.append("-- 数据行数: ").append(rows.size()).append("\n");
+        sql.append("-- 数据列数: ").append(header.size()).append("\n");
+        sql.append("-- 条件列数(仅UPDATE/DELETE生效): ").append(param.getWhereColumnCount() == null ? header.size() : param.getWhereColumnCount()).append("\n");
+        sql.append("-- 数据类型: ").append(param.getSqlType()).append("\n");
+        // 使用说明
+        sql.append("-- 使用说明\n");
+        sql.append("-- 1. 执行前请备份数据库\n");
+        sql.append("-- 2. 仔细检查每个SQL语句的正确性\n");
+        sql.append("-- 3. 建议在测试环境中先验证SQL语句\n");
+        sql.append("-- ==========================================\n");
+        sql.append("\n");
+        
         switch (param.getSqlType().toLowerCase()) {
-            case "insert" -> sql = GenerateInsertHandler.getSQL(rows, header, param.getTableName());
-            case "update" -> sql = GenerateUpdateHandler.getSQL(rows, header, param.getWhereColumnCount() == null ? 1 : param.getWhereColumnCount(), param.getTableName());
-            case "delete" -> sql = GenerateDeleteHandler.getSQL(rows, header, param.getWhereColumnCount() == null ? header.size() : param.getWhereColumnCount(), param.getTableName());
-            case "select" -> sql = GenerateSelectHandler.getSQL(rows, header, param.getTableName());
+            case "insert" -> sql.append(GenerateInsertHandler.getSQL(rows, header, param.getTableName()));
+            case "update" -> sql.append(GenerateUpdateHandler.getSQL(rows, header, param.getWhereColumnCount() == null ? 1 : param.getWhereColumnCount(), param.getTableName()));
+            case "delete" -> sql.append(GenerateDeleteHandler.getSQL(rows, header, param.getWhereColumnCount() == null ? header.size() : param.getWhereColumnCount(), param.getTableName()));
+            case "select" -> sql.append(GenerateSelectHandler.getSQL(rows, header, param.getTableName()));
             default -> throw new BusinessException("不支持的SQL类型: " + param.getSqlType());
         }
         // 写入SQL到文件
         String outputFilePath = FileUtil.getDefaultOutputFilePath(param.getSqlType() + "-" + param.getTableName());
-        FileUtil.writeStringToFile(sql, outputFilePath);
+        FileUtil.writeStringToFile(sql.toString(), outputFilePath);
         return outputFilePath;
     }
 

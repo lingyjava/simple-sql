@@ -7,18 +7,31 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.lingyuan.simplesql.ui.controller.ExcelToSQLViewController"
-            prefHeight="400.0" prefWidth="600.0">
+            prefHeight="600.0" prefWidth="600.0">
     <center>
         <VBox spacing="20">
             <padding>
-                <Insets top="30.0" right="30.0" bottom="30.0" left="30.0"/>
+                <Insets top="15.0" right="15.0" bottom="15.0" left="15.0"/>
             </padding>
+
+            <!-- 页面功能描述 -->
+            <HBox alignment="CENTER" style="-fx-background-color: #f0f8ff; -fx-padding: 15;">
+                <Label text="📊 将Excel文件数据转换为SQL语句" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+            </HBox>
+            
+            <HBox style="-fx-padding: 10;">
+                <Label text="功能: Excel文件中, 第一行填写表的列名, 第二行开始是行数据&#10;&#10;条件列数: UPDATE / DELETE 时将 Excel 前几列作为 WHERE 条件 ?"
+                        style="-fx-font-size: 13px; -fx-text-fill: #7f8c8d;" 
+                        maxWidth="600" 
+                        wrapText="true"/>
+            </HBox>
+            
             <HBox spacing="20" alignment="CENTER_LEFT">
                 <Label text="数据库表名:"/>
                 <TextField fx:id="tableNameField" promptText="请输入表名"/>
             </HBox>
             <HBox spacing="20" alignment="CENTER_LEFT">
-                <Label text="生成语句类型:"/>
+                <Label text="语句类型:"/>
                 <ComboBox fx:id="sqlTypeComboBox">
                     <items>
                         <FXCollections fx:factory="observableArrayList">

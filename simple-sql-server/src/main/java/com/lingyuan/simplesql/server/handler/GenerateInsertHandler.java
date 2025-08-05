@@ -30,11 +30,11 @@ public class GenerateInsertHandler {
             if (i > 0) sql.append(", ");
             sql.append("`").append(header.get(i)).append("`");
         }
-        sql.append(") VALUES \n");
+        sql.append(") VALUES ");
 
         // 添加行数据
         for (int i = 0; i < rows.size(); i++) {
-            if (i > 0) sql.append(", \n");
+            if (i > 0) sql.append(", ");
             sql.append("(");
             for (int j = 0; j < rows.get(i).size(); j++) {
                 if (j > 0) sql.append(", ");
