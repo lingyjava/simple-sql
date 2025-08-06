@@ -92,7 +92,7 @@ public class MainViewController extends BaseController {
         alert.setContentText(
                 """
                         开发作者：LingYuan
-                        软件版本：v1.1.0
+                        软件版本：v1.2.0
                         Copyright © 2025 LingYuan
                         希望能帮助你更轻松地处理SQL相关任务，按时下班！
                         """
