@@ -44,3 +44,6 @@ template/
 
 ### SQLLite ###
 *.db
+
+### github
+/releases/*

@@ -1,32 +1,24 @@
-# Simple SQL
-
 <div align="center">
+
+  <h1>Simple SQL</h1>
+
   <img src="./simple-sql-ui/src/main/resources/logo/logo.png" alt="Simple SQL Logo" width="100" height="100">
 
-  <p><b>一个简单易用的 SQL 脚本生成器</b></p>
+  <p><b>一个简单易用的 SQL 生成器，基于 JavaFx 实现的本地离线应用
+
+</b></p>
+
 </div>
+
+---
 
 ## 功能特性
 
-### 通过 Excel 生成 SQL
-
-- **支持多种SQL类型**：SELECT、INSERT、UPDATE、DELETE
-- **智能进度显示**：生成 SQL 时显示进度弹窗，避免界面卡顿
-- **用户友好界面**：现代化的 JavaFX 界面，操作简单直观
-- **批量处理**：支持 Excel 文件批量转换为 SQL 语句
-
-### 回退SQL脚本生成
-
+- **通过 Excel 文件生成批量的 SQL 语句**：支持 SELECT、INSERT、UPDATE、DELETE
 - **回退脚本生成**：支持根据 INSERT 语句生成对应的回退脚本
-- **批量生成**：支持批量生成多条 SQL 语句的回退脚本
-- **智能解析**：自动解析 SQL 语句中的表名、条件等信息
-
-### 表名库名管理
-
-- **数据管理**：支持添加、删除表名库名记录
-- **数据持久化**：使用 SQLite 数据库存储表名和库名信息
-- **搜索功能**：支持按表名和库名搜索历史记录
-- **快速选择**：在 Excel 转 SQL 时可通过选择按钮快速填入表名和库名
+- **表名库名管理**：支持添加、删除表名库名记录，支持搜索，支持使用选择按钮快速填入表名和库名
+- **用户友好界面**：现代化的 JavaFX 界面，操作简单直观
+- **本地离线应用**：可本地离线使用
 
 ## 开发&构建
 
