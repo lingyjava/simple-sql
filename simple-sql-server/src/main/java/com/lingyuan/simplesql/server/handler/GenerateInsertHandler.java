@@ -43,9 +43,16 @@ public class GenerateInsertHandler {
         for (int i = 0; i < rows.size(); i++) {
             if (i > 0) sql.append(", ");
             sql.append("(");
-            for (int j = 0; j < rows.get(i).size(); j++) {
+            // 修复：基于表头列数进行循环，而不是行数据大小，避免空值导致数据丢失
+            for (int j = 0; j < header.size(); j++) {
                 if (j > 0) sql.append(", ");
-                sql.append("'").append(ExcelParse.getCell(rows.get(i), j)).append("'");
+                String cellValue = ExcelParse.getCell(rows.get(i), j);
+                // 处理空值，如果为空则使用NULL，否则使用单引号包围
+                if (cellValue == null || cellValue.trim().isEmpty()) {
+                    sql.append("NULL");
+                } else {
+                    sql.append("'").append(cellValue).append("'");
+                }
             }
             sql.append(")");
         }
