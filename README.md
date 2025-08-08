@@ -14,7 +14,7 @@
 
 ## 功能特性
 
-- **通过 Excel 文件生成批量的 SQL 语句**：支持 SELECT、INSERT、UPDATE、DELETE
+- **Excel转SQL - [使用手册](http://lingyuan.tech/project/simple-sql.html)**：通过 Excel 文件生成批量的 SQL 语句，支持 SELECT、INSERT、UPDATE、DELETE
 - **回退脚本生成**：支持根据 INSERT 语句生成对应的回退脚本
 - **表名库名管理**：支持添加、删除表名库名记录，支持搜索，支持使用选择按钮快速填入表名和库名
 - **用户友好界面**：现代化的 JavaFX 界面，操作简单直观
