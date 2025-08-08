@@ -4,7 +4,9 @@ import com.lingyuan.simplesql.common.exception.BusinessException;
 import com.lingyuan.simplesql.common.util.ExcelParse;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class GenerateUpdateHandler {
 
@@ -39,13 +41,17 @@ public class GenerateUpdateHandler {
 
         // 检查set字段值是否都相同
         boolean allSetEqual = true;
-        List<String> firstSet = new ArrayList<>();
+        List<String> firstSetValue = new ArrayList<>();
         for (int i = whereCount; i < header.size(); i++) {
-            firstSet.add(ExcelParse.getCell(rows.get(0), i));
+            firstSetValue.add(ExcelParse.getCell(rows.get(0), i));
         }
         for (List<String> row : rows) {
             for (int i = 0, j = whereCount; j < header.size(); j++) {
-                if (!firstSet.get(i).equals(ExcelParse.getCell(row, j))) {
+                String firstValue = firstSetValue.get(i);
+                String currentValue = ExcelParse.getCell(row, j);
+                // 修复空指针异常：使用Objects.equals或手动判断null
+                if ((firstValue == null && currentValue != null) || 
+                    (firstValue != null && !firstValue.equals(currentValue))) {
                     allSetEqual = false;
                     break;
                 }
@@ -54,9 +60,38 @@ public class GenerateUpdateHandler {
             if (!allSetEqual) break;
         }
 
-        List<String> sqlList = new ArrayList<>();
-        // 批量update （仅为单列where条件且值相同时触发）：因为批量时WHERE用AND拼接，避免多列where条件时可能导致不是想要的结果
-        if (allSetEqual && whereCount == 1) {
+        // 检查WHERE条件列是否有空值，以及是否所有行的WHERE条件都相同
+        boolean canUseBatchUpdate = true;
+        boolean hasNullInWhere = false;
+        
+        // 检查第一行的WHERE条件值
+        List<String> firstWhereValues = new ArrayList<>();
+        for (int i = 0; i < whereCount; i++) {
+            String value = ExcelParse.getCell(rows.get(0), i);
+            firstWhereValues.add(value);
+            if (value == null || value.isEmpty()) {
+                hasNullInWhere = true;
+            }
+        }
+        
+        // 检查所有行的WHERE条件是否相同
+        for (List<String> row : rows) {
+            for (int i = 0; i < whereCount; i++) {
+                String firstValue = firstWhereValues.get(i);
+                String currentValue = ExcelParse.getCell(row, i);
+                // 修复空指针异常：使用Objects.equals或手动判断null
+                if ((firstValue == null && currentValue != null) || 
+                    (firstValue != null && !firstValue.equals(currentValue))) {
+                    canUseBatchUpdate = false;
+                    break;
+                }
+            }
+            if (!canUseBatchUpdate) break;
+        }
+
+        Set<String> sqlSet = new LinkedHashSet<>(); // 使用Set去重
+        // 批量update：单列where条件、set值相同、WHERE条件相同且无空值时使用
+        if (allSetEqual && whereCount == 1 && canUseBatchUpdate && !hasNullInWhere) {
             StringBuilder sql = new StringBuilder("UPDATE ");
             
             // 如果有数据库名，则添加数据库名前缀
@@ -65,12 +100,18 @@ public class GenerateUpdateHandler {
             }
             
             sql.append("`").append(tableName).append("`");
+            // 拼接 set 子句
             StringBuilder setClause = new StringBuilder(" SET ");
             for (int i = 0; i < setColumns.size(); i++) {
                 if (i > 0) setClause.append(", ");
-                setClause.append("`").append(setColumns.get(i)).append("`").append(" = ");
-                setClause.append("'").append(firstSet.get(i)).append("'");
+                setClause.append("`").append(setColumns.get(i)).append("`");
+                if (firstSetValue.get(i) != null && !firstSetValue.get(i).isEmpty()) {
+                    setClause.append(" = ").append("'").append(firstSetValue.get(i)).append("'");
+                } else {
+                    setClause.append(" = NULL");
+                }
             }
+            // 拼接 where 子句
             StringBuilder whereIn = new StringBuilder();
             whereIn.append(" WHERE ");
             for (int i = 0; i < whereCount; i++) {
@@ -83,7 +124,7 @@ public class GenerateUpdateHandler {
                 whereIn.append(")");
             }
             sql.append(setClause).append(whereIn).append(";");
-            sqlList.add(sql.toString());
+            sqlSet.add(sql.toString());
         } else {
             // 单行 update
             for (List<String> row : rows) {
@@ -95,25 +136,37 @@ public class GenerateUpdateHandler {
                 }
                 
                 sql.append("`").append(tableName).append("`");
+                // 拼接 set 子句
                 StringBuilder setClause = new StringBuilder( " SET " );
                 int setIdx = 0;
                 for (int i = whereCount; i < header.size(); i++) {
                     if (setIdx > 0) setClause.append(", ");
                     setClause.append("`").append(header.get(i)).append("`").append(" = ");
-                    setClause.append("'").append(ExcelParse.getCell(row, i)).append("'");
+                    String cellValue = ExcelParse.getCell(row, i);
+                    if (cellValue != null && !cellValue.isEmpty()) {
+                        setClause.append("'").append(cellValue).append("'");
+                    } else {
+                        setClause.append("NULL");
+                    }
                     setIdx++;
                 }
+                // 拼接 where 子句
                 StringBuilder whereClause = new StringBuilder(" WHERE ");
                 for (int i = 0; i < whereCount; i++) {
                     if (i > 0) whereClause.append(" AND ");
-                    whereClause.append("`").append(header.get(i)).append("`").append(" = ");
-                    whereClause.append("'").append(ExcelParse.getCell(row, i)).append("'");
+                    whereClause.append("`").append(header.get(i)).append("`");
+                    String cellValue = ExcelParse.getCell(row, i);
+                    if (cellValue != null && !cellValue.isEmpty()) {
+                        whereClause.append(" = ").append("'").append(cellValue).append("'");
+                    } else {
+                        whereClause.append(" IS NULL");
+                    }
                 }
                 sql.append(setClause).append(whereClause).append(";");
-                sqlList.add(sql.toString());
+                sqlSet.add(sql.toString());
             }
         }
-        return String.join("\n", sqlList);
+        return String.join("\n", sqlSet);
     }
 
     /**

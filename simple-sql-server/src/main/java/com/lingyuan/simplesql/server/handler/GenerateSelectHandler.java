@@ -38,21 +38,46 @@ public class GenerateSelectHandler {
 
         for (int i = 0; i < header.size(); i++) {
             Set<String> colValues = new LinkedHashSet<>(); 
+            boolean hasNullValue = false;
             for (List<String> row : rows) {
-                colValues.add(ExcelParse.getCell(row, i));
+                String cellValue = ExcelParse.getCell(row, i);
+                if (cellValue == null || cellValue.isEmpty()) {
+                    hasNullValue = true;
+                } else {
+                    colValues.add(cellValue);
+                }
             }
             if (i > 0) sql.append(" AND ");
             sql.append("`").append(header.get(i)).append("`");
-            if (colValues.size() == 1) {
-                sql.append(" = ").append("'").append(ExcelParse.getCell(rows.get(0), i)).append("'");
-            } else {
-                sql.append(" IN (");
-                int idx = 0;
-                for (String val : colValues) {
-                    if (idx++ > 0) sql.append(", ");
-                    sql.append("'").append(val).append("'");
+            
+            // 如果有空值，则使用 IS NULL 条件
+            if (hasNullValue) {
+                if (colValues.isEmpty()) {
+                    // 所有值都为空
+                    sql.append(" IS NULL");
+                } else {
+                    // 部分值为空，部分值不为空
+                    sql.append(" IS NULL OR `").append(header.get(i)).append("` IN (");
+                    int idx = 0;
+                    for (String val : colValues) {
+                        if (idx++ > 0) sql.append(", ");
+                        sql.append("'").append(val).append("'");
+                    }
+                    sql.append(")");
                 }
-                sql.append(")");
+            } else {
+                // 没有空值
+                if (colValues.size() == 1) {
+                    sql.append(" = ").append("'").append(colValues.iterator().next()).append("'");
+                } else {
+                    sql.append(" IN (");
+                    int idx = 0;
+                    for (String val : colValues) {
+                        if (idx++ > 0) sql.append(", ");
+                        sql.append("'").append(val).append("'");
+                    }
+                    sql.append(")");
+                }
             }
         }
         sql.append(";");
