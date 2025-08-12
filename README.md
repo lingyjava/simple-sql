@@ -28,8 +28,89 @@
 
 ## 快速开始
 
-### 源代码运行
+### 🚀 从GitHub下载jar包运行（推荐）
 
+#### 1. 下载jar包
+从 [GitHub Releases](https://github.com/lingyjava/simple-sql/releases) 下载最新版本的jar包：
+- `simple-sql.jar`
+
+#### 2. 下载启动脚本
+同时下载对应系统的启动脚本：
+- **Linux/macOS**: `start.sh`
+- **Windows**: `start.bat`
+
+#### 3. 安装JavaFX SDK
+由于JavaFX从Java 9开始采用模块化设计，必须安装JavaFX SDK：
+
+**下载地址**: https://gluonhq.com/products/javafx/
+
+**安装步骤**:
+1. 下载对应系统的JavaFX SDK
+2. 解压到指定目录（如: `/usr/local/javafx-sdk` 或 `C:\javafx-sdk`）
+3. 可选：设置环境变量
+   ```bash
+   # Linux/macOS
+   export JAVAFX_HOME=/usr/local/javafx-sdk
+   
+   # Windows
+   set JAVAFX_HOME=C:\javafx-sdk
+   ```
+
+#### 4. 运行应用程序
+
+**Linux/macOS:**
+```bash
+# 确保jar包和启动脚本在同一目录
+chmod +x start.sh
+./start.sh
+```
+
+**Windows:**
+```cmd
+# 确保jar包和启动脚本在同一目录
+start.bat
+```
+
+**智能启动脚本特性**:
+- 🔍 自动检测JavaFX SDK（支持环境变量和常见路径）
+- 🎯 提供多种运行方式选择
+- 📋 显示详细的运行说明
+- 💡 自动指导JavaFX SDK安装
+
+
+**自动扫描路径**:
+
+环境变量:
+- `JAVAFX_HOME`
+- `JAVAFX_SDK_HOME` 
+
+常见安装路径:
+
+**Windows:**
+- `C:\Program Files\Java\javafx-sdk`
+- `C:\Program Files (x86)\Java\javafx-sdk` 
+- `%USERPROFILE%\javafx-sdk`
+- `C:\javafx-sdk`
+
+**Linux:**
+- `/opt/javafx-sdk`
+- `/usr/local/javafx-sdk`
+- `$HOME/javafx-sdk`
+
+**macOS:**
+- `/Library/Java/JavaVirtualMachines/javafx-sdk`
+- `/usr/local/javafx-sdk`
+- `$HOME/javafx-sdk`
+
+启动脚本会自动扫描以上路径,无需手动配置。如果JavaFX SDK安装在其他位置,建议通过环境变量指定路径。
+
+### 🔧 从源码构建运行
+
+#### 环境要求
+- JDK 17+
+- Maven 3.6+
+
+#### 构建步骤
 ```bash
 # 1. 克隆项目
 git clone <repository-url>
@@ -39,79 +120,43 @@ cd simple-sql
 mvn clean install
 
 # 3. 启动应用程序
-cd simple-sql-ui
 mvn javafx:run
 ```
 
-### jar包运行
+## 运行方式详解
 
-#### ⚠️ 重要说明
+### ✅ 推荐方式：使用jar包运行（需要JavaFX SDK）
 
-**JavaFX应用程序无法通过普通jar包直接运行**，因为：
+```bash
+# Linux/macOS
+java --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls,javafx.fxml -jar simple-sql.jar
 
+# Windows
+java --module-path C:\path\to\javafx-sdk\lib --add-modules javafx.controls,javafx.fxml -jar simple-sql.jar
+```
+
+### ❌ 不推荐：直接运行jar包
+
+```bash
+java -jar simple-sql.jar
+# 结果: 错误: 缺少 JavaFX 运行时组件
+```
+
+**为什么不能直接运行？**
 - JavaFX从Java 9开始采用模块化设计
 - 需要JavaFX运行时组件，无法打包到jar中
 - 必须使用模块路径或Maven插件运行
 
-#### 方法一：使用智能启动脚本（推荐）
+## 常见问题
 
-**Linux/macOS:**
+### Q: 运行时提示"缺少JavaFX运行时组件"
+**A**: 需要安装JavaFX SDK，详见[安装步骤](#3-安装javafx-sdk)
 
-```bash
-# 1. 构建项目
-mvn clean package
+### Q: 如何知道JavaFX SDK安装成功？
+**A**: 运行启动脚本，如果检测到JavaFX SDK，会显示"✅ 检测到JavaFX SDK"
 
-# 2. 运行智能启动脚本
-cd simple-sql-ui
-./start.sh
-```
-
-**Windows:**
-
-```cmd
-# 1. 构建项目
-mvn clean package
-
-# 2. 运行智能启动脚本
-cd simple-sql-ui
-start.bat
-```
-
-**智能启动脚本特性：**
-
-- 🔍 自动检测JavaFX SDK（支持环境变量和常见路径）
-- 🎯 提供多种运行方式选择
-- 📋 显示详细的运行说明
-- ⚡ 自动构建项目（如果jar包不存在）
-- 📃 [JavaFX SDK 环境变量设置](./simple-sql-ui/JAVAFX_SETUP.md)
-
-#### 方法二：使用Maven运行（开发推荐）
-
-```bash
-cd simple-sql-ui
-mvn javafx:run
-```
-
-#### 方法三：手动运行jar包（需要JavaFX SDK）
-
-1. 下载并安装 [JavaFX SDK](https://gluonhq.com/products/javafx/)
-2. 构建项目：`mvn clean package`
-3. 运行jar包：
-
-```bash
-# Linux/macOS
-java --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls,javafx.fxml -jar simple-sql-ui/target/simple-sql-1.2.0.jar
-
-# Windows
-java --module-path C:\path\to\javafx-sdk\lib --add-modules javafx.controls,javafx.fxml -jar simple-sql-ui\target\simple-sql-1.2.0.jar
-```
-
-#### 方法四：直接运行jar包（会失败）
-
-```bash
-java -jar simple-sql-ui/target/simple-sql-1.2.0.jar
-# 结果: 错误: 缺少 JavaFX 运行时组件
-```
+### Q: 从源码运行需要JavaFX SDK吗？
+**A**: 不需要，Maven会自动处理JavaFX依赖。
 
 ## 许可证
 
