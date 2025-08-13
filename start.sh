@@ -13,7 +13,7 @@ echo ""
 echo "[信息] 检查Java版本..."
 if ! command -v java >/dev/null 2>&1; then
     echo "[错误] 未找到Java，请先安装JDK 17+"
-    echo "请访问: https://adoptium.net/ 或 https://www.oracle.com/java/technologies/downloads/"
+    echo "请访问: https://www.oracle.com/java/technologies/downloads/"
     exit 1
 fi
 
