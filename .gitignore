@@ -3,6 +3,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 *.jar
+*.exe
+*.zip
 
 ### IntelliJ IDEA ###
 .idea/*
