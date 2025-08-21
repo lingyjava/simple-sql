@@ -2,7 +2,7 @@
 
   <h1>Simple SQL</h1>
 
-  <img src="./simple-sql-ui/src/main/resources/logo/logo.png" alt="Simple SQL Logo" width="100" height="100">
+  <img src="./simple-sql-ui/src/main/resources/logo/logo.png" alt="Simple SQL Logo" width="160" height="120">
 
   <p><b>一个简单易用的 SQL 生成器，基于 JavaFx 实现的本地离线应用
 
