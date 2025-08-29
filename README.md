@@ -28,37 +28,32 @@
 
 ## 快速开始
 
-### Windows（推荐）：使用 EXE 运行
+### 使用 JAR + 智能启动脚本
 
-1. 前往 [GitHub Releases](https://github.com/lingyjava/simple-sql/releases) 下载 `simple-sql.exe`
-2. 双击运行
-
-提示（首次运行可能遇到 SmartScreen 警告）:
-- 点击“更多信息” -> “仍要运行” 即可
-
-### macOS：使用 JAR + 智能启动脚本
-
-1. 从 [GitHub Releases](https://github.com/lingyjava/simple-sql/releases) 下载 `simple-sql.zip` 解压得到：
-   - `simple-sql.jar`
-   - `start.sh`
+1. 从 [GitHub Releases](https://github.com/lingyjava/simple-sql/releases) 下载 `simple-sql.jar` 
 2. 安装依赖：
    - [JDK 17+](https://www.oracle.com/java/technologies/downloads/)
    - [JavaFX SDK 21+](https://gluonhq.com/products/javafx/)
-3. 配置（可选，推荐设置 JavaFX 目录）：
+3. 配置`%JAVAFX_HOME%`环境变量（可选，推荐设置 JavaFX 目录）
    ```bash
+   # macOS
    export JAVAFX_HOME=/usr/local/javafx-sdk
    ```
 4. 运行：
    ```bash
+   # macOS
    chmod +x start.sh
-   ./start.sh
+   ./start-macOS.sh
+
+   # Windows
+   start-windows.bat
    ```
 
-智能启动脚本特性（macOS）：
+智能启动脚本特性：
 - 自动检测 JavaFX SDK（支持环境变量与常见路径）
 - 提供详细错误提示与安装指引
 
-扫描的环境变量（macOS）:
+扫描的环境变量:
 - `JAVAFX_HOME`：优先级最高
 - `JAVAFX_SDK_HOME`：次优先级
 
@@ -66,6 +61,13 @@
 - `/Library/Java/JavaVirtualMachines/javafx-sdk`
 - `/usr/local/javafx-sdk`
 - `$HOME/javafx-sdk`
+
+扫描常见的安装路径（Windows）:
+- `C:\Program Files\Java\javafx-sdk`
+- `C:\Program Files (x86)\JavaFX\javafx-sdk`
+- `C:\javafx-sdk`
+- `%USERPROFILE%\javafx-sdk`
+- `%LOCALAPPDATA%\javafx-sdk`
 
 ### 🔧 从源码构建运行
 
@@ -87,7 +89,7 @@ cd simple-sql-ui
 mvn javafx:run
 ```
 
-## 运行命令详解（供手动方式参考）
+## 运行命令详解（手动方式）
 
 ```bash
 java --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls,javafx.fxml -jar simple-sql.jar

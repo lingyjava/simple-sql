@@ -6,10 +6,10 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.lingyuan.simplesql.ui.controller.TableDatabaseViewController"
-            prefHeight="900.0" prefWidth="1100.0" minHeight="700.0" minWidth="900.0">
+            prefHeight="700.0" prefWidth="900.0" minHeight="0.0" minWidth="0.0">
     <center>
-        <ScrollPane fitToWidth="true" fitToHeight="true">
-            <VBox spacing="20">
+        <ScrollPane fitToWidth="true" fitToHeight="false" vbarPolicy="AS_NEEDED" hbarPolicy="AS_NEEDED" pannable="true">
+            <VBox spacing="20" minHeight="-Infinity" prefHeight="-1">
                 <padding>
                     <Insets top="15.0" right="15.0" bottom="15.0" left="15.0"/>
                 </padding>
@@ -62,9 +62,9 @@
                 </VBox>
 
                 <!-- 数据表格 -->
-                <VBox spacing="10" VBox.vgrow="ALWAYS">
+                <VBox spacing="10">
                     <Label text="数据列表:" style="-fx-font-weight: bold;"/>
-                    <TableView fx:id="tableView" VBox.vgrow="ALWAYS" prefHeight="300">
+                    <TableView fx:id="tableView" prefHeight="300" minHeight="200" maxHeight="300">
                         <columns>
                             <TableColumn fx:id="idColumn" text="ID" prefWidth="50">
                                 <cellValueFactory>
