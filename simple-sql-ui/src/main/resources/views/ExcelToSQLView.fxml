@@ -57,6 +57,7 @@
                 </HBox>
                 <HBox spacing="20">
                     <Button text="上传Excel文件" fx:id="uploadBtn"/>
+                    <Button text="使用临时文件" fx:id="useTempBtn"/>
                 </HBox>
                 <HBox spacing="20">
                     <Label text="输入文件：未选择" fx:id="fileLabel"/>

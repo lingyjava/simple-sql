@@ -18,11 +18,13 @@ import javafx.scene.control.TextField;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Optional;
 
 public class ExcelToSQLViewController extends BaseController {
 
     @FXML private Button uploadBtn;
+    @FXML private Button useTempBtn;
     @FXML private Label fileLabel;
     @FXML private Button generateBtn;
     @FXML private Label outputPathLabel;
@@ -71,6 +73,40 @@ public class ExcelToSQLViewController extends BaseController {
                 selectedFile = file;
                 fileLabel.setText("已选择: " + file.getAbsolutePath());
                 generateBtn.setDisable(false);
+            }
+        });
+
+        // 使用临时文件按钮事件处理
+        useTempBtn.setOnAction(e -> {
+            try {
+                // 应用根目录
+                String rootDir = System.getProperty("user.dir");
+                File tempFile = new File(rootDir, "temp.xlsx");
+
+                if (!tempFile.exists()) {
+                    // 生成一个真正的空白xlsx（仅包含一个空Sheet，不写入任何行/列）
+                    try (org.apache.poi.xssf.usermodel.XSSFWorkbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook();
+                         FileOutputStream fos = new FileOutputStream(tempFile)) {
+                        workbook.createSheet("Sheet1");
+                        workbook.write(fos);
+                    }
+                }
+
+                // 打开临时文件
+                try {
+                    Desktop.getDesktop().open(tempFile);
+                } catch (Exception openEx) {
+                    // 如果系统不支持直接打开，提示路径
+                    showAlert(Alert.AlertType.INFORMATION, "已创建临时文件", "请手动打开并编辑此文件", tempFile.getAbsolutePath());
+                }
+
+                // 将该文件作为已选文件
+                selectedFile = tempFile;
+                fileLabel.setText("已选择: " + tempFile.getAbsolutePath());
+                generateBtn.setDisable(false);
+
+            } catch (Exception ex) {
+                showAlert(Alert.AlertType.ERROR, "处理临时文件失败", null, ex.getMessage());
             }
         });
 
