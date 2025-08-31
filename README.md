@@ -31,26 +31,31 @@
 ### 使用 JAR + 智能启动脚本
 
 1. 从 [GitHub Releases](https://github.com/lingyjava/simple-sql/releases) 下载 `simple-sql.jar` 
-2. 安装依赖：
+2. 从 [GitHub Releases](https://github.com/lingyjava/simple-sql/releases) 下载对应的启动脚本：
+   - **Windows 用户**：下载 `start.bat`
+   - **macOS/Linux 用户**：下载 `start.sh`
+3. 安装依赖：
    - [JDK 17+](https://www.oracle.com/java/technologies/downloads/)
    - [JavaFX SDK 21+](https://gluonhq.com/products/javafx/)
-3. 配置`%JAVAFX_HOME%`环境变量（可选，推荐设置 JavaFX 目录）
+4. 配置`%JAVAFX_HOME%`环境变量（可选，设置 JavaFX 目录）
    ```bash
    # macOS
    export JAVAFX_HOME=/usr/local/javafx-sdk
    ```
-4. 运行：
+5. 将 `simple-sql.jar` 和启动脚本放在同一目录下，按照下方说明运行即可。
    ```bash
    # macOS
    chmod +x start.sh
-   ./start-macOS.sh
+   ./start.sh
 
    # Windows
-   start-windows.bat
+   ./start.bat
    ```
 
-智能启动脚本特性：
+#### 智能启动脚本特性
+
 - 自动检测 JavaFX SDK（支持环境变量与常见路径）
+- 当未检测到 JavaFX 环境变量时尝试检测常见安装路径
 - 提供详细错误提示与安装指引
 
 扫描的环境变量:
