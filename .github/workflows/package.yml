@@ -1,0 +1,75 @@
+name: Build Windows EXE with JavaFX
+
+on:
+  push:
+    branches: [master, develop] # 当推送到 master 或 develop 分支时自动触发
+  workflow_dispatch: # 允许手动在 GitHub Actions 页面点击运行
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      # Step 1：检出仓库代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2：设置 JDK 17（与项目版本一致）
+      - name: Set up JDK 17 with JavaFX
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: "maven"
+
+      # Step 3：用 Maven 构建项目
+      - name: Build with Maven
+        run: mvn clean package -DskipTests=true
+
+      # Step 4：准备 jpackage 输入目录
+      - name: Prepare jpackage input
+        run: |
+          mkdir jpackage-input
+          copy simple-sql.jar jpackage-input\
+        shell: cmd
+
+      # Step 5：使用 jpackage 打包 EXE（包含 JavaFX 运行时）
+      - name: Package EXE with jpackage
+        run: |
+          mkdir dist
+          jpackage `
+            --type exe `
+            --input jpackage-input `
+            --main-jar simple-sql.jar `
+            --main-class com.lingyuan.simplesql.ui.MainApp `
+            --name "SimpleSql" `
+            --app-version "1.2.0" `
+            --vendor "Lingyuan" `
+            --icon simple-sql-ui/src/main/resources/logo/logo.ico `
+            --description "Simple SQL Tool with JavaFX GUI" `
+            --win-dir-chooser `
+            --win-menu `
+            --win-shortcut `
+            --win-menu-group "SimpleSql" `
+            --add-modules java.base,java.desktop,java.logging,java.sql,java.xml,javafx.controls,javafx.fxml,javafx.graphics,javafx.base `
+            --dest dist
+        shell: powershell
+
+      # Step 6：上传构建产物
+      - name: Upload EXE Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: simple-sql-windows-installer
+          path: dist/*.exe
+          retention-days: 30
+
+      # Step 7：如果是 tag 推送，创建 Release
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*.exe
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
