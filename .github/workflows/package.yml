@@ -70,6 +70,7 @@ jobs:
             --win-menu `
             --win-shortcut `
             --win-menu-group "SimpleSql" `
+            --add-modules java.desktop,java.logging,java.sql,java.xml `
             --win-console `
             --dest dist
         shell: powershell
