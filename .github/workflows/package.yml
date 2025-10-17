@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    env:
+      MAVEN_OPTS: -Dhttps.protocols=TLSv1.2 -Dmaven.wagon.http.retryHandler.count=5
 
     steps:
       # Step 1：检出仓库代码
@@ -22,18 +24,22 @@ jobs:
           java-version: "17"
           cache: "maven"
 
-      # Step 3：用 Maven 构建项目
-      - name: Build with Maven
-        run: mvn clean package -DskipTests=true
+      # Step 3：预下载依赖与插件，减少网络抖动影响
+      - name: Warm up Maven dependencies (go-offline)
+        run: mvn -B -ntp -U -e -Dhttps.protocols=TLSv1.2 -Dmaven.wagon.http.retryHandler.count=5 dependency:go-offline
 
-      # Step 4：准备 jpackage 输入目录
+      # Step 4：用 Maven 构建项目（开启重试与 TLS1.2）
+      - name: Build with Maven
+        run: mvn -B -ntp -U -e -Dhttps.protocols=TLSv1.2 -Dmaven.wagon.http.retryHandler.count=5 clean package -DskipTests=true
+
+      # Step 5：准备 jpackage 输入目录
       - name: Prepare jpackage input
         run: |
           mkdir jpackage-input
           copy simple-sql.jar jpackage-input\
         shell: cmd
 
-      # Step 5：使用 jpackage 打包 EXE（包含 JavaFX 运行时）
+      # Step 6：使用 jpackage 打包 EXE（包含 JavaFX 运行时）
       - name: Package EXE with jpackage
         run: |
           mkdir dist
@@ -55,7 +61,7 @@ jobs:
             --dest dist
         shell: powershell
 
-      # Step 6：上传构建产物
+      # Step 7：上传构建产物
       - name: Upload EXE Installer
         uses: actions/upload-artifact@v4
         with:
@@ -63,7 +69,7 @@ jobs:
           path: dist/*.exe
           retention-days: 30
 
-      # Step 7：如果是 tag 推送，创建 Release
+      # Step 8：如果是 tag 推送，创建 Release
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
