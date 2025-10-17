@@ -29,8 +29,8 @@ jobs:
         run: mvn -B -ntp -U -e dependency:go-offline
 
       # Step 4：用 Maven 构建项目（开启重试与 TLS1.2）
-      - name: Build with Maven
-        run: mvn -B -ntp -U -e clean package -DskipTests=true
+      - name: Build with Maven (install all modules to local repo)
+        run: mvn -B -ntp -U -e clean install -DskipTests=true
 
       # Step 5：准备 jpackage 输入目录（thin jar + 依赖目录）
       - name: Prepare jpackage input
@@ -40,7 +40,24 @@ jobs:
           New-Item -ItemType Directory -Force -Path jpackage-input\lib | Out-Null
 
           # 复制 UI 模块的依赖到 jpackage-input/lib 下（包含 JavaFX 平台包）
-          mvn -q -B -ntp -pl simple-sql-ui dependency:copy-dependencies -DoutputDirectory=jpackage-input/lib
+          mvn -q -B -ntp -pl simple-sql-ui dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=jpackage-input/lib
+
+          # 解析 JavaFX 版本号
+          $fxv = mvn -q -DforceStdout help:evaluate -Dexpression=javafx.version
+          if (-not $fxv) { throw '无法解析 javafx.version' }
+
+          # 拉取并复制 Windows 平台的 JavaFX 原生库（带 classifier win）
+          $fxModules = @('javafx-base','javafx-graphics','javafx-controls','javafx-fxml')
+          foreach ($m in $fxModules) {
+            mvn -q -B -ntp dependency:get -Dartifact="org.openjfx:$m:$fxv:win"
+            $jarPath = Join-Path $env:USERPROFILE ".m2\\repository\\org\\openjfx\\$m\\$fxv\\$m-$fxv-win.jar"
+            if (Test-Path $jarPath) {
+              Copy-Item $jarPath jpackage-input\lib -Force
+            } else {
+              Write-Error "未找到 $m-$fxv-win.jar: $jarPath"
+              exit 1
+            }
+          }
 
           # 复制 UI 模块的“瘦”jar到输入目录并重命名为 simple-sql.jar
           $jar = Get-ChildItem -Path simple-sql-ui\target -Filter 'simple-sql-ui-*.jar' |
