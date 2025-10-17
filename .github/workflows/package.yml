@@ -57,7 +57,7 @@ jobs:
             --win-menu `
             --win-shortcut `
             --win-menu-group "SimpleSql" `
-            --add-modules java.base,java.desktop,java.logging,java.sql,java.xml,javafx.controls,javafx.fxml,javafx.graphics,javafx.base `
+            --runtime-image "%JAVA_HOME%" `
             --dest dist
         shell: powershell
 
