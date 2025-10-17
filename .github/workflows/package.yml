@@ -32,12 +32,23 @@ jobs:
       - name: Build with Maven
         run: mvn -B -ntp -U -e clean package -DskipTests=true
 
-      # Step 5：准备 jpackage 输入目录
+      # Step 5：准备 jpackage 输入目录（thin jar + 依赖目录）
       - name: Prepare jpackage input
         run: |
-          mkdir jpackage-input
-          copy simple-sql.jar jpackage-input\
-        shell: cmd
+          # 创建输入目录
+          New-Item -ItemType Directory -Force -Path jpackage-input | Out-Null
+          New-Item -ItemType Directory -Force -Path jpackage-input\lib | Out-Null
+
+          # 复制 UI 模块的依赖到 jpackage-input/lib 下（包含 JavaFX 平台包）
+          mvn -q -B -ntp -pl simple-sql-ui dependency:copy-dependencies -DoutputDirectory=jpackage-input/lib
+
+          # 复制 UI 模块的“瘦”jar到输入目录并重命名为 simple-sql.jar
+          $jar = Get-ChildItem -Path simple-sql-ui\target -Filter 'simple-sql-ui-*.jar' |
+            Where-Object { $_.Name -notmatch 'javadoc|sources|original|with-dependencies' } |
+            Select-Object -First 1
+          if (-not $jar) { throw '未找到 simple-sql-ui 的主 Jar 文件' }
+          Copy-Item $jar.FullName jpackage-input\simple-sql.jar
+        shell: powershell
 
       # Step 6：使用 jpackage 打包 EXE（包含 JavaFX 运行时）
       - name: Package EXE with jpackage
@@ -57,7 +68,7 @@ jobs:
             --win-menu `
             --win-shortcut `
             --win-menu-group "SimpleSql" `
-            --runtime-image "$env:JAVA_HOME" `
+            --win-console `
             --dest dist
         shell: powershell
 
