@@ -46,10 +46,11 @@ jobs:
           $fxv = mvn -q -DforceStdout help:evaluate -Dexpression=javafx.version
           if (-not $fxv) { throw '无法解析 javafx.version' }
 
-          # 拉取并复制 Windows 平台的 JavaFX 原生库（带 classifier win）
-          $fxModules = @('javafx-base','javafx-graphics','javafx-controls','javafx-fxml')
-          foreach ($m in $fxModules) {
-            mvn -q -B -ntp dependency:get -Dartifact="org.openjfx:$m:$fxv:win"
+          # 拉取并复制 Windows 平台 JavaFX 原生库（仅 graphics 需要 win classifier）
+          $fxWinModules = @('javafx-graphics')
+          foreach ($m in $fxWinModules) {
+            $artifact = "org.openjfx:${m}:${fxv}:win"
+            mvn -q -B -ntp dependency:get "-Dartifact=$artifact"
             $jarPath = Join-Path $env:USERPROFILE ".m2\\repository\\org\\openjfx\\$m\\$fxv\\$m-$fxv-win.jar"
             if (Test-Path $jarPath) {
               Copy-Item $jarPath jpackage-input\lib -Force
