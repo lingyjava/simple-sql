@@ -42,23 +42,7 @@ jobs:
           # 复制 UI 模块的依赖到 jpackage-input/lib 下（包含 JavaFX 平台包）
           mvn -q -B -ntp -pl simple-sql-ui dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=jpackage-input/lib
 
-          # 解析 JavaFX 版本号
-          $fxv = mvn -q -DforceStdout help:evaluate -Dexpression=javafx.version
-          if (-not $fxv) { throw '无法解析 javafx.version' }
-
-          # 拉取并复制 Windows 平台 JavaFX 原生库（仅 graphics 需要 win classifier）
-          $fxWinModules = @('javafx-graphics')
-          foreach ($m in $fxWinModules) {
-            $artifact = "org.openjfx:${m}:${fxv}:win"
-            mvn -q -B -ntp dependency:get "-Dartifact=$artifact"
-            $jarPath = Join-Path $env:USERPROFILE ".m2\\repository\\org\\openjfx\\$m\\$fxv\\$m-$fxv-win.jar"
-            if (Test-Path $jarPath) {
-              Copy-Item $jarPath jpackage-input\lib -Force
-            } else {
-              Write-Error "未找到 $m-$fxv-win.jar: $jarPath"
-              exit 1
-            }
-          }
+          # 通过 pom 的 profile 自动解析并下载 JavaFX 平台包，无需手动获取
 
           # 复制 UI 模块的“瘦”jar到输入目录并重命名为 simple-sql.jar
           $jar = Get-ChildItem -Path simple-sql-ui\target -Filter 'simple-sql-ui-*.jar' |
