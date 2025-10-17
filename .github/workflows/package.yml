@@ -57,7 +57,7 @@ jobs:
             --win-menu `
             --win-shortcut `
             --win-menu-group "SimpleSql" `
-            --runtime-image "%JAVA_HOME%" `
+            --runtime-image "$env:JAVA_HOME" `
             --dest dist
         shell: powershell
 
