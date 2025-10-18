@@ -1,0 +1,95 @@
+name: Build Windows EXE with JavaFX
+
+on:
+  push:
+    branches: [master, develop] # 当推送到 master 或 develop 分支时自动触发
+  workflow_dispatch: # 允许手动在 GitHub Actions 页面点击运行
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      MAVEN_OPTS: -Dhttps.protocols=TLSv1.2 -Dmaven.wagon.http.retryHandler.count=5
+
+    steps:
+      # Step 1：检出仓库代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2：设置 JDK 17（与项目版本一致）
+      - name: Set up JDK 17 with JavaFX
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: "maven"
+
+      # Step 3：预下载依赖与插件，减少网络抖动影响
+      - name: Warm up Maven dependencies (go-offline)
+        run: mvn -B -ntp -U -e dependency:go-offline
+
+      # Step 4：用 Maven 构建项目（开启重试与 TLS1.2）
+      - name: Build with Maven (install all modules to local repo)
+        run: mvn -B -ntp -U -e clean install -DskipTests=true
+
+      # Step 5：准备 jpackage 输入目录（thin jar + 依赖目录）
+      - name: Prepare jpackage input
+        run: |
+          # 创建输入目录
+          New-Item -ItemType Directory -Force -Path jpackage-input | Out-Null
+          New-Item -ItemType Directory -Force -Path jpackage-input\lib | Out-Null
+
+          # 复制 UI 模块的依赖到 jpackage-input/lib 下（包含 JavaFX 平台包）
+          mvn -q -B -ntp -pl simple-sql-ui dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=jpackage-input/lib
+
+          # 通过 pom 的 profile 自动解析并下载 JavaFX 平台包，无需手动获取
+
+          # 复制 UI 模块的“瘦”jar到输入目录并重命名为 simple-sql.jar
+          $jar = Get-ChildItem -Path simple-sql-ui\target -Filter 'simple-sql-ui-*.jar' |
+            Where-Object { $_.Name -notmatch 'javadoc|sources|original|with-dependencies' } |
+            Select-Object -First 1
+          if (-not $jar) { throw '未找到 simple-sql-ui 的主 Jar 文件' }
+          Copy-Item $jar.FullName jpackage-input\simple-sql.jar
+        shell: powershell
+
+      # Step 6：使用 jpackage 打包 EXE（包含 JavaFX 运行时）
+      - name: Package EXE with jpackage
+        run: |
+          mkdir dist
+          jpackage `
+            --type exe `
+            --input jpackage-input `
+            --main-jar simple-sql.jar `
+            --main-class com.lingyuan.simplesql.ui.MainApp `
+            --name "SimpleSql" `
+            --app-version "1.2.0" `
+            --vendor "Lingyuan" `
+            --icon simple-sql-ui/src/main/resources/logo/logo.ico `
+            --description "Simple SQL Tool with JavaFX GUI" `
+            --win-dir-chooser `
+            --win-menu `
+            --win-shortcut `
+            --win-menu-group "SimpleSql" `
+            --add-modules java.desktop,java.logging,java.sql,java.xml `
+            --win-console `
+            --dest dist
+        shell: powershell
+
+      # Step 7：上传构建产物
+      - name: Upload EXE Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: simple-sql-windows-installer
+          path: dist/*.exe
+          retention-days: 30
+
+      # Step 8：如果是 tag 推送，创建 Release
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*.exe
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
