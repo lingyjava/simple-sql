@@ -1,6 +1,6 @@
 package com.lingyuan.simplesql.ui.controller;
 
-import com.lingyuan.simplesql.common.db.TableDatabaseHelper;
+import com.lingyuan.simplesql.common.db.TableDictionaryHelper;
 import com.lingyuan.simplesql.domain.dto.SqlGeneratorParam;
 import com.lingyuan.simplesql.domain.enums.SQLTypeEnum;
 import com.lingyuan.simplesql.server.impl.SqlGeneratorFactory;
@@ -248,15 +248,15 @@ public class ExcelToSQLViewController extends BaseController {
     private void showTableSelectionDialog() {
         try {
             // 创建对话框
-            Dialog<TableDatabaseHelper.TableDatabaseInfo> dialog = new Dialog<>();
+            Dialog<TableDictionaryHelper.TableDictionaryInfo> dialog = new Dialog<>();
             dialog.setTitle("选择表名");
             dialog.setHeaderText("请选择要使用的表名，将自动填充对应的库名");
             dialog.setResizable(true);
             
             // 加载选择对话框
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/TableDatabaseSelectionDialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/TableDictionarySelectionDialog.fxml"));
             javafx.scene.Parent root = loader.load();
-            TableDatabaseSelectionDialogController controller = loader.getController();
+            TableDictionarySelectionDialogController controller = loader.getController();
             
             // 设置对话框内容
             dialog.getDialogPane().setContent(root);
@@ -275,14 +275,14 @@ public class ExcelToSQLViewController extends BaseController {
             });
             
             // 显示对话框并处理结果
-            Optional<TableDatabaseHelper.TableDatabaseInfo> result = dialog.showAndWait();
+            Optional<TableDictionaryHelper.TableDictionaryInfo> result = dialog.showAndWait();
             if (result.isPresent() && result.get() != null) {
-                TableDatabaseHelper.TableDatabaseInfo selectedInfo = result.get();
+                TableDictionaryHelper.TableDictionaryInfo selectedInfo = result.get();
                 tableNameField.setText(selectedInfo.getTableName());
                 databaseNameField.setText(selectedInfo.getDatabaseName());
             } else {
                 // 如果对话框是通过双击关闭的，检查controller中是否有选择结果
-                TableDatabaseHelper.TableDatabaseInfo selectedInfo = controller.getSelectedInfo();
+                TableDictionaryHelper.TableDictionaryInfo selectedInfo = controller.getSelectedInfo();
                 if (selectedInfo != null) {
                     tableNameField.setText(selectedInfo.getTableName());
                     databaseNameField.setText(selectedInfo.getDatabaseName());

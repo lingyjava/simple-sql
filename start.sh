@@ -1,3 +1,4 @@
+# 启动 SimpleSQL UI 模块时使用，不适用于 Web 模块
 #!/bin/bash
 
 # Simple SQL 智能启动脚本

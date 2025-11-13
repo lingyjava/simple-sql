@@ -36,6 +36,26 @@
         <!-- JavaFX 依赖 end -->
     </dependencies>
 
+    <profiles>
+        <!-- Windows 平台：引入包含本地库的 JavaFX Graphics 平台包 -->
+        <profile>
+            <id>javafx-win</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-graphics</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <!-- 编译插件 -->

@@ -1,5 +1,6 @@
 package com.lingyuan.simplesql.ui.controller;
 
+import com.lingyuan.simplesql.common.util.FileUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -48,7 +49,7 @@ public class MainViewController extends BaseController {
                 if (newTab == excelToSQLTab && excelToSQLTab.getContent() == null) {
                     excelToSQLTab.setContent(loadView("/views/ExcelToSQLView.fxml"));
                 } else if (newTab == tableDatabaseTab && tableDatabaseTab.getContent() == null) {
-                    tableDatabaseTab.setContent(loadView("/views/TableDatabaseView.fxml"));
+                    tableDatabaseTab.setContent(loadView("/views/TableDictionaryView.fxml"));
                 } else if (newTab == sqlRollbackTab && sqlRollbackTab.getContent() == null) {
                     sqlRollbackTab.setContent(loadView("/views/RollbackSQLView.fxml"));
                 }
@@ -114,24 +115,69 @@ public class MainViewController extends BaseController {
             return; // 用户取消
         }
 
-        String cacheDirPath = System.getProperty("user.dir") + "/output";
+        // 使用统一的应用数据目录，递归清理其中的 .sql 文件（保留 .db）
+        String cacheDirPath = FileUtil.getAppDataDir();
         File cacheDir = new File(cacheDirPath);
-        int deletedCount = 0;
-        if (cacheDir.exists() && cacheDir.isDirectory()) {
-            File[] files = cacheDir.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isFile() && file.delete()) {
-                        deletedCount++;
-                    }
-                }
-            }
-        }
+        int deletedCount = deleteSqlFilesRecursively(cacheDir);
+        // 删除清空后的日期子目录等，但保留根应用目录
+        deleteEmptyDirsRecursively(cacheDir, true);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("清除缓存");
         alert.setHeaderText(null);
         alert.setContentText("已清除 " + deletedCount + " 个缓存文件。");
         alert.initOwner(mainTabPane.getScene().getWindow());
         alert.showAndWait();
+    }
+
+    /**
+     * 递归删除目录下的 .sql 文件，跳过 .db 等非 .sql 文件
+     */
+    private int deleteSqlFilesRecursively(File dir) {
+        if (dir == null || !dir.exists()) {
+            return 0;
+        }
+        int count = 0;
+        if (dir.isFile()) {
+            String nameLower = dir.getName().toLowerCase();
+            if (nameLower.endsWith(".sql") && !nameLower.endsWith(".db")) {
+                if (dir.delete()) {
+                    return 1;
+                }
+            }
+            return 0;
+        }
+        File[] children = dir.listFiles();
+        if (children == null) {
+            return 0;
+        }
+        for (File child : children) {
+            count += deleteSqlFilesRecursively(child);
+        }
+        return count;
+    }
+
+    /**
+     * 递归删除空目录
+     * @param dir  目标目录
+     * @param isRoot 是否为根目录（根目录不删除）
+     */
+    private void deleteEmptyDirsRecursively(File dir, boolean isRoot) {
+        if (dir == null || !dir.isDirectory()) {
+            return;
+        }
+        File[] children = dir.listFiles();
+        if (children == null) {
+            return;
+        }
+        for (File child : children) {
+            if (child.isDirectory()) {
+                deleteEmptyDirsRecursively(child, false);
+            }
+        }
+        // 再次检查目录是否为空，且不是根目录则删除
+        File[] after = dir.listFiles();
+        if (!isRoot && (after == null || after.length == 0)) {
+            dir.delete();
+        }
     }
 }

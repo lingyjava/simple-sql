@@ -1,6 +1,6 @@
 package com.lingyuan.simplesql.ui.controller;
 
-import com.lingyuan.simplesql.common.db.TableDatabaseHelper;
+import com.lingyuan.simplesql.common.db.TableDictionaryHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,7 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class TableDatabaseViewController extends BaseController {
+public class TableDictionaryViewController extends BaseController {
 
     @FXML private TextField tableNameField;
     @FXML private TextField databaseNameField;
@@ -22,21 +22,21 @@ public class TableDatabaseViewController extends BaseController {
     @FXML private Button searchBtn;
     @FXML private Button resetBtn;
     
-    @FXML private TableView<TableDatabaseHelper.TableDatabaseInfo> tableView;
-    @FXML private TableColumn<TableDatabaseHelper.TableDatabaseInfo, Integer> idColumn;
-    @FXML private TableColumn<TableDatabaseHelper.TableDatabaseInfo, String> tableNameColumn;
-    @FXML private TableColumn<TableDatabaseHelper.TableDatabaseInfo, String> databaseNameColumn;
-    @FXML private TableColumn<TableDatabaseHelper.TableDatabaseInfo, java.sql.Timestamp> createTimeColumn;
-    @FXML private TableColumn<TableDatabaseHelper.TableDatabaseInfo, java.sql.Timestamp> updateTimeColumn;
-    @FXML private TableColumn<TableDatabaseHelper.TableDatabaseInfo, Void> actionColumn;
+    @FXML private TableView<TableDictionaryHelper.TableDictionaryInfo> tableView;
+    @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, Integer> idColumn;
+    @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, String> tableNameColumn;
+    @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, String> databaseNameColumn;
+    @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, java.sql.Timestamp> createTimeColumn;
+    @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, java.sql.Timestamp> updateTimeColumn;
+    @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, Void> actionColumn;
 
-    private TableDatabaseHelper dbHelper;
-    private ObservableList<TableDatabaseHelper.TableDatabaseInfo> dataList;
+    private TableDictionaryHelper dbHelper;
+    private ObservableList<TableDictionaryHelper.TableDictionaryInfo> dataList;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @FXML
     public void initialize() {
-        dbHelper = new TableDatabaseHelper();
+        dbHelper = new TableDictionaryHelper();
         dataList = FXCollections.observableArrayList();
         
         // 初始化表格
@@ -58,7 +58,7 @@ public class TableDatabaseViewController extends BaseController {
         updateTimeColumn.setCellValueFactory(new PropertyValueFactory<>("updateTime"));
         
         // 格式化时间显示
-        createTimeColumn.setCellFactory(column -> new TableCell<TableDatabaseHelper.TableDatabaseInfo, java.sql.Timestamp>() {
+        createTimeColumn.setCellFactory(column -> new TableCell<TableDictionaryHelper.TableDictionaryInfo, java.sql.Timestamp>() {
             @Override
             protected void updateItem(java.sql.Timestamp item, boolean empty) {
                 super.updateItem(item, empty);
@@ -70,7 +70,7 @@ public class TableDatabaseViewController extends BaseController {
             }
         });
         
-        updateTimeColumn.setCellFactory(column -> new TableCell<TableDatabaseHelper.TableDatabaseInfo, java.sql.Timestamp>() {
+        updateTimeColumn.setCellFactory(column -> new TableCell<TableDictionaryHelper.TableDictionaryInfo, java.sql.Timestamp>() {
             @Override
             protected void updateItem(java.sql.Timestamp item, boolean empty) {
                 super.updateItem(item, empty);
@@ -83,13 +83,13 @@ public class TableDatabaseViewController extends BaseController {
         });
         
         // 设置删除按钮
-        actionColumn.setCellFactory(column -> new TableCell<TableDatabaseHelper.TableDatabaseInfo, Void>() {
+        actionColumn.setCellFactory(column -> new TableCell<TableDictionaryHelper.TableDictionaryInfo, Void>() {
             private final Button deleteBtn = new Button("删除");
             
             {
                 deleteBtn.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
                 deleteBtn.setOnAction(event -> {
-                    TableDatabaseHelper.TableDatabaseInfo info = getTableView().getItems().get(getIndex());
+                    TableDictionaryHelper.TableDictionaryInfo info = getTableView().getItems().get(getIndex());
                     deleteRecord(info);
                 });
             }
@@ -130,7 +130,7 @@ public class TableDatabaseViewController extends BaseController {
 
     private void loadData() {
         try {
-            List<TableDatabaseHelper.TableDatabaseInfo> records = dbHelper.getAllTableDatabase();
+            List<TableDictionaryHelper.TableDictionaryInfo> records = dbHelper.getAllTableDictionary();
             dataList.clear();
             dataList.addAll(records);
         } catch (Exception e) {
@@ -148,7 +148,7 @@ public class TableDatabaseViewController extends BaseController {
         }
         
         try {
-            dbHelper.addTableDatabase(tableName, databaseName);
+            dbHelper.addTableDictionary(tableName, databaseName);
             showAlert(Alert.AlertType.INFORMATION, "添加成功", "记录已成功添加到数据库", null);
             clearFields();
             loadData();
@@ -157,7 +157,7 @@ public class TableDatabaseViewController extends BaseController {
         }
     }
 
-    private void deleteRecord(TableDatabaseHelper.TableDatabaseInfo info) {
+    private void deleteRecord(TableDictionaryHelper.TableDictionaryInfo info) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("确认删除");
         confirm.setHeaderText(null);
@@ -166,7 +166,7 @@ public class TableDatabaseViewController extends BaseController {
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
-                    dbHelper.deleteTableDatabase(info.getId());
+                    dbHelper.deleteTableDictionary(info.getId());
                     showAlert(Alert.AlertType.INFORMATION, "删除成功", "记录已成功删除", null);
                     loadData();
                 } catch (Exception e) {
@@ -186,7 +186,7 @@ public class TableDatabaseViewController extends BaseController {
         String databaseName = searchDatabaseNameField.getText().trim();
         
         try {
-            List<TableDatabaseHelper.TableDatabaseInfo> records;
+            List<TableDictionaryHelper.TableDictionaryInfo> records;
             
             if (!tableName.isEmpty() && !databaseName.isEmpty()) {
                 // 两个字段都有值，先按表名搜索，再按库名过滤
@@ -200,7 +200,7 @@ public class TableDatabaseViewController extends BaseController {
             } else if (!databaseName.isEmpty()) {
                 records = dbHelper.searchByDatabaseName(databaseName);
             } else {
-                records = dbHelper.getAllTableDatabase();
+                records = dbHelper.getAllTableDictionary();
             }
             
             dataList.clear();

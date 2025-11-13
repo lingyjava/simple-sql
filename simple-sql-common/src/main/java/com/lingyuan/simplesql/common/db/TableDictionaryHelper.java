@@ -1,17 +1,21 @@
 package com.lingyuan.simplesql.common.db;
 
+import com.lingyuan.simplesql.common.util.FileUtil;
+
+import java.io.File;
 import java.util.List;
 
 /**
  * 表名和库名管理数据库助手
  */
-public class TableDatabaseHelper {
+public class TableDictionaryHelper {
     
     private final SQLiteHelper dbHelper;
-    private static final String DB_FILE = "table_database.db";
+    private static final String DB_FILE_NAME = "table_dictionary.db";
     
-    public TableDatabaseHelper() {
-        this.dbHelper = new SQLiteHelper(DB_FILE);
+    public TableDictionaryHelper() {
+        String dbPath = FileUtil.getAppDataDir() + File.separator + DB_FILE_NAME;
+        this.dbHelper = new SQLiteHelper(dbPath);
         initDatabase();
     }
     
@@ -20,7 +24,7 @@ public class TableDatabaseHelper {
      */
     private void initDatabase() {
         String createTableSql = """
-            CREATE TABLE IF NOT EXISTS table_database_info (
+            CREATE TABLE IF NOT EXISTS table_dictionary_info (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 table_name TEXT NOT NULL,
                 database_name TEXT,
@@ -34,27 +38,27 @@ public class TableDatabaseHelper {
     /**
      * 添加表名和库名
      */
-    public void addTableDatabase(String tableName, String databaseName) {
-        String sql = "INSERT INTO table_database_info (table_name, database_name) VALUES (?, ?)";
+    public void addTableDictionary(String tableName, String databaseName) {
+        String sql = "INSERT INTO table_dictionary_info (table_name, database_name) VALUES (?, ?)";
         dbHelper.executeDML(sql, tableName, databaseName);
     }
     
     /**
      * 删除表名和库名
      */
-    public void deleteTableDatabase(int id) {
-        String sql = "DELETE FROM table_database_info WHERE id = ?";
+    public void deleteTableDictionary(int id) {
+        String sql = "DELETE FROM table_dictionary_info WHERE id = ?";
         dbHelper.executeDML(sql, id);
     }
     
     /**
      * 获取所有表名和库名
      */
-    public List<TableDatabaseInfo> getAllTableDatabase() {
-        String sql = "SELECT id, table_name, database_name, create_time, update_time FROM table_database_info ORDER BY create_time DESC";
+    public List<TableDictionaryInfo> getAllTableDictionary() {
+        String sql = "SELECT id, table_name, database_name, create_time, update_time FROM table_dictionary_info ORDER BY create_time DESC";
         return dbHelper.query(sql, rs -> {
             try {
-                TableDatabaseInfo info = new TableDatabaseInfo();
+                TableDictionaryInfo info = new TableDictionaryInfo();
                 info.setId(rs.getInt("id"));
                 info.setTableName(rs.getString("table_name"));
                 info.setDatabaseName(rs.getString("database_name"));
@@ -70,11 +74,11 @@ public class TableDatabaseHelper {
     /**
      * 根据表名搜索
      */
-    public List<TableDatabaseInfo> searchByTableName(String tableName) {
-        String sql = "SELECT id, table_name, database_name, create_time, update_time FROM table_database_info WHERE table_name LIKE ? ORDER BY create_time DESC";
+    public List<TableDictionaryInfo> searchByTableName(String tableName) {
+        String sql = "SELECT id, table_name, database_name, create_time, update_time FROM table_dictionary_info WHERE table_name LIKE ? ORDER BY create_time DESC";
         return dbHelper.query(sql, rs -> {
             try {
-                TableDatabaseInfo info = new TableDatabaseInfo();
+                TableDictionaryInfo info = new TableDictionaryInfo();
                 info.setId(rs.getInt("id"));
                 info.setTableName(rs.getString("table_name"));
                 info.setDatabaseName(rs.getString("database_name"));
@@ -90,11 +94,11 @@ public class TableDatabaseHelper {
     /**
      * 根据库名搜索
      */
-    public List<TableDatabaseInfo> searchByDatabaseName(String databaseName) {
-        String sql = "SELECT id, table_name, database_name, create_time, update_time FROM table_database_info WHERE database_name LIKE ? ORDER BY create_time DESC";
+    public List<TableDictionaryInfo> searchByDatabaseName(String databaseName) {
+        String sql = "SELECT id, table_name, database_name, create_time, update_time FROM table_dictionary_info WHERE database_name LIKE ? ORDER BY create_time DESC";
         return dbHelper.query(sql, rs -> {
             try {
-                TableDatabaseInfo info = new TableDatabaseInfo();
+                TableDictionaryInfo info = new TableDictionaryInfo();
                 info.setId(rs.getInt("id"));
                 info.setTableName(rs.getString("table_name"));
                 info.setDatabaseName(rs.getString("database_name"));
@@ -110,7 +114,7 @@ public class TableDatabaseHelper {
     /**
      * 表名和库名信息实体类
      */
-    public static class TableDatabaseInfo {
+    public static class TableDictionaryInfo {
         private int id;
         private String tableName;
         private String databaseName;
