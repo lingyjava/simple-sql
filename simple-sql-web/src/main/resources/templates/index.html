@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="~{fragments/site_head :: siteHead}"></head>
+	<body>
+		<div th:replace="~{fragments/layout_header :: layoutHeader}"></div>
+		<div class="container">
+			<div class="card">
+				<h1>🚀 Simple-SQL 控制台</h1>
+				<p class="muted">支持 Excel 转 SQL、回退脚本生成，以及表库字典管理。</p>
+				<div class="section">
+					<div class="actions">
+						<a class="btn" href="/excel">Excel 转 SQL</a>
+						<a class="btn secondary" href="/rollback">回退脚本生成</a>
+						<a class="btn ghost" href="/tables">表库字典管理</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,17 @@
+<div th:fragment="uploadField(id, name, accept, labelText, buttonText)">
+	<div class="form-row">
+		<label th:for="${id}" th:text="${labelText}">上传文件</label>
+		<input
+			th:id="${id}"
+			th:name="${name}"
+			type="file"
+			th:accept="${accept}"
+			style="display: none"
+			onchange="var s=this.nextElementSibling&&this.nextElementSibling.nextElementSibling; var n=(this.files&&this.files.length)?this.files[0].name:''; if(s){s.textContent=n?('已选择：'+n):''}"
+		/>
+		<label th:for="${id}" class="btn white" th:text="${buttonText}"
+			>选择文件</label
+		>
+		<span class="note"></span>
+	</div>
+</div>

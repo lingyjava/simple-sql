@@ -32,15 +32,45 @@ public class FileUtil {
     }
 
     /**
-     * 获取默认输出文件路径（当前目录下output-prefix-年月日时分秒-6位随机数.sql）
-     * @param fileName 前缀
+     * 获取应用数据根目录（跨平台）：
+     * - Windows: %APPDATA%/simplesql
+     * - macOS: ~/Documents/simplesql（Finder 显示为“文稿”）
+     * - 其他: ~/Documents/simplesql（若无 Documents 则回退 ~）
+     */
+    public static String getAppDataDir() {
+        String os = System.getProperty("os.name", "").toLowerCase();
+        String home = System.getProperty("user.home");
+        File baseDir;
+        if (os.contains("win")) {
+            String appData = System.getenv("APPDATA");
+            if (appData == null || appData.isEmpty()) {
+                baseDir = new File(home, "AppData" + File.separator + "Roaming");
+            } else {
+                baseDir = new File(appData);
+            }
+        } else if (os.contains("mac")) {
+            baseDir = new File(home, "Documents"); // 本地化名称“文稿”，实际路径为 Documents
+        } else {
+            File docs = new File(home, "Documents");
+            baseDir = docs.exists() ? docs : new File(home);
+        }
+        File appDir = new File(baseDir, "simplesql");
+        createDirectory(appDir.getAbsolutePath());
+        return appDir.getAbsolutePath();
+    }
+
+    /**
+     * 获取默认输出文件路径（按天分组：{APP_DATA}/YYYYMMDD/HHmmss.sql）
+     * @param fileName 自定义文件名
      * @return 输出文件路径
      */
     public static String getDefaultOutputFilePath(String fileName) {
-        String dir = System.getProperty("user.dir") + File.separator + "output";
-        createDirectory(dir);
-        String time = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
-        return dir + File.separator + time + "-" + fileName + ".sql";
+        String appRoot = getAppDataDir();
+        String day = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String time = new SimpleDateFormat("HHmmss").format(new Date());
+        String dayDir = appRoot + File.separator + day;
+        createDirectory(dayDir);
+        return dayDir + File.separator + time + fileName + ".sql";
     }
 
 

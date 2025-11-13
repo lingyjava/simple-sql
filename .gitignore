@@ -41,11 +41,6 @@ build/
 ### Mac OS ###
 .DS_Store
 
-### project files ###
-output/
-template/
-*.xlsx
-
 ### SQLLite ###
 *.db
 

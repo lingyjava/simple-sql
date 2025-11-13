@@ -1,9 +1,9 @@
 name: Build Windows EXE with JavaFX
 
 on:
-  push:
-    branches: [master, develop] # 当推送到 master 或 develop 分支时自动触发
-  workflow_dispatch: # 允许手动在 GitHub Actions 页面点击运行
+  # push:
+  # branches: [master, develop] # 当推送到 master 或 develop 分支时自动触发
+  # workflow_dispatch: # 允许手动在 GitHub Actions 页面点击运行
 
 jobs:
   build:

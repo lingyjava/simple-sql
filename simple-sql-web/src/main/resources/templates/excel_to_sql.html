@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="~{fragments/site_head :: siteHead}"></head>
+	<body>
+		<div th:replace="~{fragments/layout_header :: layoutHeader}"></div>
+		<div class="container">
+			<div class="card">
+				<h1>📊 将 Excel 文件数据转换为 SQL 语句</h1>
+
+				<div class="section">
+					<div><strong>功能说明</strong></div>
+					<ul class="note">
+						<li>Excel 第一行填写表的列名，第二行开始是行数据</li>
+						<li>UPDATE / DELETE 类型时需填写「条件列数」用于 WHERE 条件</li>
+					</ul>
+				</div>
+
+				<div th:if="${error}" class="error" th:text="${error}">发生错误</div>
+				<div th:if="${success}" class="success" th:text="${success}">
+					操作成功
+				</div>
+
+				<form
+					class="form"
+					th:action="@{/excel/generate}"
+					method="post"
+					enctype="multipart/form-data"
+				>
+					<div class="form-row">
+						<label for="databaseName">数据库库名（非必填）</label>
+						<input
+							id="databaseName"
+							name="databaseName"
+							type="text"
+							placeholder="请输入数据库库名"
+							th:value="${databaseName}"
+						/>
+					</div>
+					<div class="form-row">
+						<label for="tableName">数据库表名</label>
+						<input
+							list="tableNameList"
+							id="tableName"
+							name="tableName"
+							type="text"
+							placeholder="请输入数据库表名或从列表选择"
+							th:value="${tableName}"
+							onchange="autoFillDatabaseName()"
+						/>
+						<datalist id="tableNameList"></datalist>
+						<!-- <span class="note">可直接输入或从字典选择</span> -->
+						<button type="button" class="btn ghost" onclick="openDictPicker()">
+							从字典选择
+						</button>
+					</div>
+					<div class="form-row">
+						<label for="sqlType">语句类型</label>
+						<select
+							id="sqlType"
+							name="sqlType"
+							th:onchange="toggleWhereCount()"
+						>
+							<option
+								th:each="t : ${sqlTypes}"
+								th:value="${t}"
+								th:text="${t}"
+								th:selected="${t == sqlTypeSelected}"
+							></option>
+						</select>
+					</div>
+					<div class="form-row">
+						<label for="whereColumnCount">条件列数</label>
+						<input
+							id="whereColumnCount"
+							name="whereColumnCount"
+							type="number"
+							min="1"
+							placeholder="请输入数字"
+							th:value="${whereColumnCount}"
+						/>
+					</div>
+					<div
+						th:replace="~{fragments/file_upload :: uploadField('file','file','.xls,.xlsx','上传 Excel 文件','选择 Excel 文件')}"
+					></div>
+					<div class="actions">
+						<button type="submit">咻～～～（生成SQL）</button>
+						<a class="btn secondary" th:href="@{/excel/template}"
+							>下载标准模板</a
+						>
+						<a class="btn ghost" href="/tables">管理表库字典</a>
+					</div>
+				</form>
+
+				<div th:if="${outputPath}" class="result">
+					<div>
+						<strong>输出路径：</strong
+						><span th:text="${outputPath}">/path/to/output.sql</span>
+					</div>
+					<div style="margin-top: 8px">
+						<a class="btn" th:if="${downloadUrl}" th:href="${downloadUrl}"
+							>下载生成的 SQL 文件</a
+						>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 字典选择弹窗 -->
+		<div id="dictModal" class="modal" aria-hidden="true">
+			<div class="modal-card">
+				<div
+					style="
+						display: flex;
+						align-items: center;
+						justify-content: space-between;
+						margin-bottom: 10px;
+					"
+				>
+					<h2 style="margin: 0; font-size: 16px">从字典选择表名/库名</h2>
+					<button type="button" class="btn ghost" onclick="closeDictPicker()">
+						关闭
+					</button>
+				</div>
+				<div class="form" style="margin-bottom: 10px">
+					<div class="form-row">
+						<label for="dictFilterTable">表名包含</label>
+						<input
+							id="dictFilterTable"
+							type="text"
+							placeholder="输入关键字过滤"
+						/>
+					</div>
+					<div class="form-row">
+						<label for="dictFilterDb">库名包含</label>
+						<input id="dictFilterDb" type="text" placeholder="输入关键字过滤" />
+					</div>
+				</div>
+				<div style="overflow-x: auto; max-height: 50vh; overflow-y: auto">
+					<table class="table">
+						<thead>
+							<tr>
+								<th style="width: 72px">ID</th>
+								<th>表名</th>
+								<th>库名</th>
+								<th style="width: 120px">操作</th>
+							</tr>
+						</thead>
+						<tbody id="dictTbody">
+							<tr>
+								<td colspan="4">加载中...</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			function toggleWhereCount() {
+				var select = document.getElementById("sqlType");
+				var input = document.getElementById("whereColumnCount");
+				var v = select && select.value ? select.value.toUpperCase() : "";
+				if (v === "UPDATE" || v === "DELETE") {
+					input.removeAttribute("disabled");
+				} else {
+					input.setAttribute("disabled", "disabled");
+					input.value = "";
+				}
+			}
+			// 初始载入根据已选值调整
+			document.addEventListener("DOMContentLoaded", function () {
+				toggleWhereCount();
+				// 载入表名候选
+				try {
+					fetch("/api/tables")
+						.then((r) => (r.ok ? r.json() : Promise.reject()))
+						.then((data) => {
+							var dl = document.getElementById("tableNameList");
+							if (!dl) return;
+							dl.innerHTML = "";
+							(data || []).forEach(function (item) {
+								var opt = document.createElement("option");
+								opt.value = item.tableName;
+								opt.label = item.databaseName
+									? item.tableName + "  ·  " + item.databaseName
+									: item.tableName;
+								dl.appendChild(opt);
+							});
+						})
+						.catch(() => {});
+				} catch (e) {}
+			});
+			function autoFillDatabaseName() {
+				var name = document.getElementById("tableName")?.value || "";
+				if (!name) return;
+				try {
+					fetch("/api/tables/lookup?name=" + encodeURIComponent(name))
+						.then((r) => (r.ok ? r.json() : Promise.reject()))
+						.then((d) => {
+							if (d && d.databaseName) {
+								var db = document.getElementById("databaseName");
+								if (db && !db.value) db.value = d.databaseName;
+							}
+						})
+						.catch(() => {});
+				} catch (e) {}
+			}
+			function onFileSelected() {
+				var input = document.getElementById("file");
+				var name =
+					input && input.files && input.files.length ? input.files[0].name : "";
+				var span = document.getElementById("fileNameDisplay");
+				if (span) span.textContent = name ? "已选择：" + name : "";
+			}
+			// 字典选择器
+			var __dictCache = null;
+			function openDictPicker() {
+				var modal = document.getElementById("dictModal");
+				if (!modal) return;
+				if (!__dictCache) {
+					loadDictData()
+						.then(renderDictTable)
+						.catch(function () {
+							renderDictTable([]);
+						});
+				} else {
+					renderDictTable(__dictCache);
+				}
+				modal.classList.add("open");
+				modal.setAttribute("aria-hidden", "false");
+				bindDictFilters();
+			}
+			function closeDictPicker() {
+				var modal = document.getElementById("dictModal");
+				if (!modal) return;
+				modal.classList.remove("open");
+				modal.setAttribute("aria-hidden", "true");
+			}
+			function loadDictData() {
+				return fetch("/api/tables")
+					.then((r) => (r.ok ? r.json() : Promise.reject()))
+					.then(function (data) {
+						__dictCache = Array.isArray(data) ? data : [];
+						return __dictCache;
+					});
+			}
+			function bindDictFilters() {
+				var fTable = document.getElementById("dictFilterTable");
+				var fDb = document.getElementById("dictFilterDb");
+				if (fTable) {
+					fTable.oninput = applyDictFilter;
+				}
+				if (fDb) {
+					fDb.oninput = applyDictFilter;
+				}
+			}
+			function applyDictFilter() {
+				var kwTable = (
+					document.getElementById("dictFilterTable")?.value || ""
+				).toLowerCase();
+				var kwDb = (
+					document.getElementById("dictFilterDb")?.value || ""
+				).toLowerCase();
+				var list = (__dictCache || []).filter(function (i) {
+					var t = (i.tableName || "").toLowerCase();
+					var d = (i.databaseName || "").toLowerCase();
+					var okT = !kwTable || t.includes(kwTable);
+					var okD = !kwDb || d.includes(kwDb);
+					return okT && okD;
+				});
+				renderDictTable(list);
+			}
+			function renderDictTable(list) {
+				var tbody = document.getElementById("dictTbody");
+				if (!tbody) return;
+				if (!list || list.length === 0) {
+					tbody.innerHTML = '<tr><td colspan="4">暂无记录</td></tr>';
+					return;
+				}
+				tbody.innerHTML = "";
+				list.forEach(function (i) {
+					var tr = document.createElement("tr");
+					var tdId = document.createElement("td");
+					tdId.textContent = i.id;
+					var tdT = document.createElement("td");
+					tdT.textContent = i.tableName || "";
+					var tdD = document.createElement("td");
+					tdD.textContent = i.databaseName || "";
+					var tdA = document.createElement("td");
+					var btn = document.createElement("button");
+					btn.className = "btn";
+					btn.type = "button";
+					btn.textContent = "选择";
+					btn.onclick = function () {
+						var tInput = document.getElementById("tableName");
+						var dInput = document.getElementById("databaseName");
+						if (tInput) tInput.value = i.tableName || "";
+						if (dInput) dInput.value = i.databaseName || "";
+						closeDictPicker();
+					};
+					tdA.appendChild(btn);
+					tr.appendChild(tdId);
+					tr.appendChild(tdT);
+					tr.appendChild(tdD);
+					tr.appendChild(tdA);
+					tbody.appendChild(tr);
+				});
+			}
+		</script>
+	</body>
+</html>

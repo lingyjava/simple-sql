@@ -1,6 +1,6 @@
 package com.lingyuan.simplesql.ui.controller;
 
-import com.lingyuan.simplesql.common.db.TableDatabaseHelper;
+import com.lingyuan.simplesql.common.db.TableDictionaryHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,29 +11,29 @@ import javafx.stage.Stage;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class TableDatabaseSelectionDialogController extends BaseController {
+public class TableDictionarySelectionDialogController extends BaseController {
 
     @FXML private TextField searchTableNameField;
     @FXML private TextField searchDatabaseNameField;
     @FXML private Button searchBtn;
     @FXML private Button resetBtn;
     
-    @FXML private TableView<TableDatabaseHelper.TableDatabaseInfo> tableView;
-    @FXML private TableColumn<TableDatabaseHelper.TableDatabaseInfo, Integer> idColumn;
-    @FXML private TableColumn<TableDatabaseHelper.TableDatabaseInfo, String> tableNameColumn;
-    @FXML private TableColumn<TableDatabaseHelper.TableDatabaseInfo, String> databaseNameColumn;
-    @FXML private TableColumn<TableDatabaseHelper.TableDatabaseInfo, java.sql.Timestamp> createTimeColumn;
+    @FXML private TableView<TableDictionaryHelper.TableDictionaryInfo> tableView;
+    @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, Integer> idColumn;
+    @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, String> tableNameColumn;
+    @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, String> databaseNameColumn;
+    @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, java.sql.Timestamp> createTimeColumn;
 
-    private TableDatabaseHelper dbHelper;
-    private ObservableList<TableDatabaseHelper.TableDatabaseInfo> dataList;
+    private TableDictionaryHelper dbHelper;
+    private ObservableList<TableDictionaryHelper.TableDictionaryInfo> dataList;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
     // 选择结果
-    private TableDatabaseHelper.TableDatabaseInfo selectedInfo;
+    private TableDictionaryHelper.TableDictionaryInfo selectedInfo;
 
     @FXML
     public void initialize() {
-        dbHelper = new TableDatabaseHelper();
+        dbHelper = new TableDictionaryHelper();
         dataList = FXCollections.observableArrayList();
         
         // 初始化表格
@@ -54,7 +54,7 @@ public class TableDatabaseSelectionDialogController extends BaseController {
         createTimeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
         
         // 格式化时间显示
-        createTimeColumn.setCellFactory(column -> new TableCell<TableDatabaseHelper.TableDatabaseInfo, java.sql.Timestamp>() {
+        createTimeColumn.setCellFactory(column -> new TableCell<TableDictionaryHelper.TableDictionaryInfo, java.sql.Timestamp>() {
             @Override
             protected void updateItem(java.sql.Timestamp item, boolean empty) {
                 super.updateItem(item, empty);
@@ -74,7 +74,7 @@ public class TableDatabaseSelectionDialogController extends BaseController {
         // 设置双击选择事件
         tableView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                TableDatabaseHelper.TableDatabaseInfo selected = tableView.getSelectionModel().getSelectedItem();
+                TableDictionaryHelper.TableDictionaryInfo selected = tableView.getSelectionModel().getSelectedItem();
                 if (selected != null) {
                     selectedInfo = selected;
                     // 直接关闭对话框，结果会在getSelectedInfo()中返回
@@ -103,7 +103,7 @@ public class TableDatabaseSelectionDialogController extends BaseController {
 
     private void loadData() {
         try {
-            List<TableDatabaseHelper.TableDatabaseInfo> records = dbHelper.getAllTableDatabase();
+            List<TableDictionaryHelper.TableDictionaryInfo> records = dbHelper.getAllTableDictionary();
             dataList.clear();
             dataList.addAll(records);
         } catch (Exception e) {
@@ -116,7 +116,7 @@ public class TableDatabaseSelectionDialogController extends BaseController {
         String databaseName = searchDatabaseNameField.getText().trim();
         
         try {
-            List<TableDatabaseHelper.TableDatabaseInfo> records;
+            List<TableDictionaryHelper.TableDictionaryInfo> records;
             
             if (!tableName.isEmpty() && !databaseName.isEmpty()) {
                 // 两个字段都有值，先按表名搜索，再按库名过滤
@@ -130,7 +130,7 @@ public class TableDatabaseSelectionDialogController extends BaseController {
             } else if (!databaseName.isEmpty()) {
                 records = dbHelper.searchByDatabaseName(databaseName);
             } else {
-                records = dbHelper.getAllTableDatabase();
+                records = dbHelper.getAllTableDictionary();
             }
             
             dataList.clear();
@@ -152,7 +152,7 @@ public class TableDatabaseSelectionDialogController extends BaseController {
     /**
      * 获取选择的记录
      */
-    public TableDatabaseHelper.TableDatabaseInfo getSelectedInfo() {
+    public TableDictionaryHelper.TableDictionaryInfo getSelectedInfo() {
         return selectedInfo;
     }
 } 

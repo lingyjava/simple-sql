@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="~{fragments/site_head :: siteHead}"></head>
+	<body>
+		<div th:replace="~{fragments/layout_header :: layoutHeader}"></div>
+		<div class="container">
+			<div class="card">
+				<h1>📚 表库字典管理</h1>
+				<p class="muted">
+					维护常用的表名和库名，便于在生成页面快速选择和自动填充。
+				</p>
+
+				<div class="section">
+					<h2>新增记录</h2>
+					<form class="form" th:action="@{/tables/add}" method="post">
+						<div class="form-row">
+							<label for="tableName">表名</label>
+							<input
+								id="tableName"
+								name="tableName"
+								type="text"
+								placeholder="请输入表名"
+								required
+							/>
+						</div>
+						<div class="form-row">
+							<label for="databaseName">库名（可选）</label>
+							<input
+								id="databaseName"
+								name="databaseName"
+								type="text"
+								placeholder="请输入库名（可留空）"
+							/>
+						</div>
+						<div class="actions">
+							<button type="submit">添加记录</button>
+						</div>
+					</form>
+				</div>
+
+				<div class="section">
+					<h2>搜索</h2>
+					<form class="form" method="get" th:action="@{/tables}">
+						<div class="form-row">
+							<label for="qTable">表名包含</label>
+							<input
+								id="qTable"
+								name="tableName"
+								type="text"
+								th:value="${tableName}"
+							/>
+						</div>
+						<div class="form-row">
+							<label for="qDb">库名包含</label>
+							<input
+								id="qDb"
+								name="databaseName"
+								type="text"
+								th:value="${databaseName}"
+							/>
+						</div>
+						<div class="actions">
+							<button type="submit" class="btn">搜索</button>
+							<a class="btn ghost" href="/tables">重置</a>
+						</div>
+					</form>
+				</div>
+
+				<div class="toolbar" style="margin: 8px 0 12px">
+					<span
+						class="pill"
+						th:text="'当前共 ' + ${#lists.size(records)} + ' 条记录'"
+						>当前共 0 条记录</span
+					>
+				</div>
+
+				<div style="overflow-x: auto">
+					<table class="table">
+						<thead>
+							<tr>
+								<th style="width: 72px">ID</th>
+								<th>表名</th>
+								<th>库名</th>
+								<th style="width: 120px">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="r : ${records}">
+								<td th:text="${r.id}">1</td>
+								<td th:text="${r.tableName}">table_x</td>
+								<td th:text="${r.databaseName}">db_y</td>
+								<td>
+									<form
+										th:action="@{/tables/delete}"
+										method="post"
+										style="display: inline"
+									>
+										<input type="hidden" name="id" th:value="${r.id}" />
+										<button type="submit" class="btn warn">删除</button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

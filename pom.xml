@@ -14,6 +14,7 @@
         <module>simple-sql-server</module>
         <module>simple-sql-ui</module>
         <module>simple-sql-common</module>
+        <module>simple-sql-web</module>
     </modules>
 
     <properties>
@@ -48,6 +49,12 @@
     <!-- 依赖版本管理 -->
     <dependencyManagement>
         <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <version>3.2.12</version>
+        </dependency>
+
             <!-- Lombok 依赖 start -->
             <dependency>
                 <groupId>org.projectlombok</groupId>

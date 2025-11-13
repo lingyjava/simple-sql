@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="~{fragments/site_head :: siteHead}"></head>
+	<body>
+		<div th:replace="~{fragments/layout_header :: layoutHeader}"></div>
+		<div class="container">
+			<div class="card">
+				<h1>🧯 生成 SQL 回退脚本</h1>
+				<p class="muted">
+					上传包含 INSERT/UPDATE/DELETE 的 SQL
+					文件，自动生成回退脚本，便于回滚。
+				</p>
+
+				<div th:if="${error}" class="error" th:text="${error}">发生错误</div>
+				<div th:if="${success}" class="success" th:text="${success}">
+					操作成功
+				</div>
+
+				<form
+					class="form"
+					th:action="@{/rollback/generate}"
+					method="post"
+					enctype="multipart/form-data"
+				>
+					<div
+						th:replace="~{fragments/file_upload :: uploadField('file','file','.sql','上传 SQL 文件','选择 SQL 文件')}"
+					></div>
+					<div class="actions">
+						<button type="submit">生成回退脚本</button>
+					</div>
+				</form>
+
+				<div th:if="${outputPath}" class="result">
+					<div>
+						<strong>输出路径：</strong
+						><span th:text="${outputPath}">/path/to/rollback.sql</span>
+					</div>
+					<div style="margin-top: 8px">
+						<a class="btn" th:if="${downloadUrl}" th:href="${downloadUrl}"
+							>下载回退脚本</a
+						>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
