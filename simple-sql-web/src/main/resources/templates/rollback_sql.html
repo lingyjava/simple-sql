@@ -40,6 +40,21 @@
 							>下载回退脚本</a
 						>
 					</div>
+					<div th:if="${previewContent}" style="margin-top: 12px">
+						<div><strong>预览：</strong></div>
+						<pre
+							class="code-block"
+							style="max-height: 360px; overflow: auto; white-space: pre-wrap"
+							th:text="${previewContent}"
+						></pre>
+					</div>
+					<div
+						th:if="${previewTooLarge}"
+						class="note"
+						style="margin-top: 8px"
+					>
+						生成内容较大，为避免页面卡顿，请点击上方“下载回退脚本”后使用本地编辑器查看。
+					</div>
 				</div>
 			</div>
 		</div>
