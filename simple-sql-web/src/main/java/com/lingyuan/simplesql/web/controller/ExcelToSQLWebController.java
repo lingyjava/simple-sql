@@ -3,6 +3,7 @@ package com.lingyuan.simplesql.web.controller;
 import com.lingyuan.simplesql.common.util.FileUtil;
 import com.lingyuan.simplesql.domain.dto.SqlGeneratorParam;
 import com.lingyuan.simplesql.server.impl.SqlGeneratorFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -19,9 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -93,7 +96,31 @@ public class ExcelToSQLWebController {
 
 			model.addAttribute("success", "SQL 文件已生成");
 			model.addAttribute("outputPath", outputPath);
-			model.addAttribute("downloadUrl", "/excel/download?path=" + outputPath);
+
+			// 小文件直接在页面中预览内容，避免用户来回切换
+			String previewContent = null;
+			boolean previewTooLarge = false;
+			File generatedFile = new File(outputPath);
+			// 约 100KB 以内的文件直接预览
+			final long maxPreviewBytes = 100 * 1024;
+			if (generatedFile.exists() && generatedFile.isFile()) {
+				long size = generatedFile.length();
+				if (size <= maxPreviewBytes) {
+					try {
+						previewContent = Files.readString(generatedFile.toPath(), StandardCharsets.UTF_8);
+					} catch (IOException ignored) {
+						// 预览失败不影响下载
+					}
+				} else {
+					previewTooLarge = true;
+				}
+			}
+			model.addAttribute("previewContent", previewContent);
+			model.addAttribute("previewTooLarge", previewTooLarge);
+
+			// 对路径进行 URL 编码，避免特殊字符（如 \ 和空格）导致 400 错误
+			String encodedPath = URLEncoder.encode(outputPath, StandardCharsets.UTF_8);
+			model.addAttribute("downloadUrl", "/excel/download?path=" + encodedPath);
 		} catch (Exception ex) {
 			model.addAttribute("error", "生成失败: " + ex.getMessage());
 		} finally {
@@ -107,27 +134,19 @@ public class ExcelToSQLWebController {
 
 	@GetMapping("/excel/template")
 	public ResponseEntity<Resource> downloadTemplate() {
-		Path[] candidates = new Path[] {
-				Paths.get("template", "标准生成模版.xlsx"),
-				Paths.get("..", "template", "标准生成模版.xlsx"),
-				Paths.get("..", "..", "template", "标准生成模版.xlsx"),
-				Paths.get(System.getProperty("user.dir"), "template", "标准生成模版.xlsx")
-		};
-		Path found = null;
-		for (Path p : candidates) {
-			if (Files.exists(p)) {
-				found = p.toAbsolutePath();
-				break;
+		try {
+			// 从 classpath 的 resources 根目录加载模板文件
+			ClassPathResource resource = new ClassPathResource("标准生成模版.xlsx");
+			if (!resource.exists()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 			}
+			return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"标准生成模版.xlsx\"")
+					.contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+					.body(resource);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-		if (found == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
-		FileSystemResource resource = new FileSystemResource(found);
-		return ResponseEntity.ok()
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"标准生成模版.xlsx\"")
-				.contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-				.body(resource);
 	}
 
 	@GetMapping("/excel/download")
@@ -135,7 +154,9 @@ public class ExcelToSQLWebController {
 		if (!StringUtils.hasText(path)) {
 			return ResponseEntity.badRequest().build();
 		}
-		File target = new File(path);
+		// path 在生成时经过了 URL 编码，这里需要先解码
+		String decodedPath = URLDecoder.decode(path, StandardCharsets.UTF_8);
+		File target = new File(decodedPath);
 		// 仅允许下载应用数据目录下的文件
 		String outputDir = FileUtil.getAppDataDir();
 		try {

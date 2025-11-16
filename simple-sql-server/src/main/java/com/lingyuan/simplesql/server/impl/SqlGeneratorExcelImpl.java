@@ -87,7 +87,7 @@ public class SqlGeneratorExcelImpl implements SqlGenerator {
             default -> throw new BusinessException("不支持的SQL类型: " + param.getSqlType());
         }
         // 写入SQL到文件
-        String outputFilePath = FileUtil.getDefaultOutputFilePath(param.getSqlType() + "-" + param.getTableName());
+        String outputFilePath = FileUtil.getDefaultOutputFilePath(param.getSqlType() + ";" + param.getTableName());
         FileUtil.writeStringToFile(sql.toString(), outputFilePath);
         return outputFilePath;
     }

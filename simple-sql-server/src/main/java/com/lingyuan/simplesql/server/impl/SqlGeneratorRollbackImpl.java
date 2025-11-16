@@ -128,7 +128,7 @@ public class SqlGeneratorRollbackImpl implements SqlGenerator {
             // 生成输出文件名
             String originalFileName = new File(param.getFilePath()).getName();
             String baseName = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
-            String outputPath = FileUtil.getDefaultOutputFilePath(String.format("ROLLBACK-%s", baseName));
+            String outputPath = FileUtil.getDefaultOutputFilePath(String.format("ROLLBACK;%s", baseName));
             FileUtil.writeStringToFile(rollbackScript, outputPath);
             
             return outputPath;

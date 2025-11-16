@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -52,7 +55,30 @@ public class RollbackSQLWebController {
 
 			model.addAttribute("success", "回退脚本已生成");
 			model.addAttribute("outputPath", outputPath);
-			model.addAttribute("downloadUrl", "/excel/download?path=" + outputPath);
+
+			// 小文件直接在页面中预览内容
+			String previewContent = null;
+			boolean previewTooLarge = false;
+			File generatedFile = new File(outputPath);
+			final long maxPreviewBytes = 100 * 1024;
+			if (generatedFile.exists() && generatedFile.isFile()) {
+				long size = generatedFile.length();
+				if (size <= maxPreviewBytes) {
+					try {
+						previewContent = Files.readString(generatedFile.toPath(), StandardCharsets.UTF_8);
+					} catch (Exception ignored) {
+						// 预览失败不影响下载
+					}
+				} else {
+					previewTooLarge = true;
+				}
+			}
+			model.addAttribute("previewContent", previewContent);
+			model.addAttribute("previewTooLarge", previewTooLarge);
+
+			// 与 Excel 页面保持一致，对路径进行 URL 编码，并复用下载接口
+			String encodedPath = URLEncoder.encode(outputPath, StandardCharsets.UTF_8);
+			model.addAttribute("downloadUrl", "/excel/download?path=" + encodedPath);
 		} catch (Exception ex) {
 			model.addAttribute("error", "生成失败: " + ex.getMessage());
 		} finally {

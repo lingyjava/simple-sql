@@ -34,8 +34,9 @@ public class FileUtil {
     /**
      * 获取应用数据根目录（跨平台）：
      * - Windows: %APPDATA%/simplesql
-     * - macOS: ~/Documents/simplesql（Finder 显示为“文稿”）
-     * - 其他: ~/Documents/simplesql（若无 Documents 则回退 ~）
+     * - macOS: ~/Library/Application Support/simplesql（符合 macOS 规范，避免权限问题）
+     * - Linux: ~/.local/share/simplesql（遵循 XDG Base Directory 规范，适合线上部署）
+     * - 其他: ~/.local/share/simplesql（若无则回退 ~/.simplesql）
      */
     public static String getAppDataDir() {
         String os = System.getProperty("os.name", "").toLowerCase();
@@ -49,10 +50,22 @@ public class FileUtil {
                 baseDir = new File(appData);
             }
         } else if (os.contains("mac")) {
-            baseDir = new File(home, "Documents"); // 本地化名称“文稿”，实际路径为 Documents
+            // macOS 标准应用数据目录，符合 Apple 规范，避免权限问题
+            baseDir = new File(home, "Library" + File.separator + "Application Support");
         } else {
-            File docs = new File(home, "Documents");
-            baseDir = docs.exists() ? docs : new File(home);
+            // Linux 及其他 Unix 系统：遵循 XDG Base Directory 规范
+            String xdgDataHome = System.getenv("XDG_DATA_HOME");
+            if (xdgDataHome != null && !xdgDataHome.isEmpty()) {
+                baseDir = new File(xdgDataHome);
+            } else {
+                File localShare = new File(home, ".local" + File.separator + "share");
+                if (localShare.exists() || localShare.getParentFile().exists()) {
+                    baseDir = localShare;
+                } else {
+                    // 回退到用户主目录下的隐藏目录
+                    baseDir = new File(home);
+                }
+            }
         }
         File appDir = new File(baseDir, "simplesql");
         createDirectory(appDir.getAbsolutePath());
@@ -70,7 +83,7 @@ public class FileUtil {
         String time = new SimpleDateFormat("HHmmss").format(new Date());
         String dayDir = appRoot + File.separator + day;
         createDirectory(dayDir);
-        return dayDir + File.separator + time + fileName + ".sql";
+        return dayDir + File.separator + time + ";" + fileName + ".sql";
     }
 
 
