@@ -34,6 +34,26 @@
 
 ## 快速开始
 
+前提条件：下载并配置 [JDK17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+
+### Web 版（建议使用）
+
+从 Github RELEASE 下载 `simple-sql-web.jar`
+
+```bash
+# 启动命令
+java -jar simple-sql-web.jar
+```
+
+### 桌面版
+
+从 Github RELEASE 下载 `simple-sql-ui.jar`
+
+```bash
+# 手动方式运行命令，需替换 javafx-sdk 路径
+java --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls,javafx.fxml -jar simple-sql-ui.jar
+```
+
 ### 🔧 从源码构建运行
 
 ```bash
@@ -50,12 +70,6 @@ mvn spring-boot:run
 # 3.1 或启动 ui 模块
 cd simple-sql-ui
 mvn javafx:run
-```
-
-### ui 模块 jar 运行命令详解（手动方式）
-
-```bash
-java --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls,javafx.fxml -jar simple-sql.jar
 ```
 
 ## 许可证
