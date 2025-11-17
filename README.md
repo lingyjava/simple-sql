@@ -34,11 +34,11 @@
 
 ## 快速开始
 
-前提条件：下载并配置 [JDK17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
-
 ### Web 版（建议使用）
 
-从 [Github RELEASE](https://github.com/lingyjava/simple-sql/releases) 下载 `simple-sql-web.jar`
+- 下载并配置 [JDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+
+- 从 [Github RELEASE](https://github.com/lingyjava/simple-sql/releases) 下载 `simple-sql-web.jar`
 
 ```bash
 # 启动命令
@@ -47,7 +47,11 @@ java -jar simple-sql-web.jar
 
 ### 桌面版
 
-从 [Github RELEASE](https://github.com/lingyjava/simple-sql/releases) 下载 `simple-sql-ui.jar`
+- 下载并配置 [JDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+
+- 下载并配置 [JavaFx 21](https://gluonhq.com/products/javafx/)
+
+- 从 [Github RELEASE](https://github.com/lingyjava/simple-sql/releases) 下载 `simple-sql-ui.jar`
 
 ```bash
 # 手动方式运行命令，需替换 javafx-sdk 路径
@@ -55,6 +59,10 @@ java --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls,javafx.
 ```
 
 ### 🔧 从源码构建运行
+
+- 下载并配置 [JDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+
+- 下载并配置 [Maven 3.6+](https://maven.apache.org/download.cgi)
 
 ```bash
 # 1. 克隆项目
