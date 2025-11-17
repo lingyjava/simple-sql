@@ -249,8 +249,11 @@ DELETE FROM `user_info` WHERE `id` = '2' AND `name` = 'Bob';</pre
 						></pre>
 					</div>
 					<div th:if="${previewTooLarge}" class="note" style="margin-top: 8px">
-						生成内容较大，为避免页面卡顿，请点击上方“下载生成的 SQL
-						文件”后使用本地编辑器查看。
+						生成内容较大，为避免页面卡顿，请点击上方"下载生成的 SQL
+						文件"后使用本地编辑器查看。
+					</div>
+					<div th:if="${previewError}" class="error" style="margin-top: 8px">
+						<span th:text="${previewError}">预览加载失败</span>
 					</div>
 				</div>
 			</div>

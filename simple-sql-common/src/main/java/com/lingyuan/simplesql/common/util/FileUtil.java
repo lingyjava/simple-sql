@@ -89,12 +89,12 @@ public class FileUtil {
 
 
     /**
-     * 写入字符串到文件
+     * 写入字符串到文件（使用 UTF-8 编码）
      * @param content 字符串内容
      * @param outputFilePath 输出文件路径
      */
     public static void writeStringToFile(String content, String outputFilePath) {
-        try (PrintWriter out = new PrintWriter(outputFilePath)) {
+        try (PrintWriter out = new PrintWriter(outputFilePath, "UTF-8")) {
             out.println(content);
             log.info("Content has been written to: {}", outputFilePath);
         } catch (Exception e) {

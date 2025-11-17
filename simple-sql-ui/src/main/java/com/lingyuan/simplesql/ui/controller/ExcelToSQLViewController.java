@@ -1,6 +1,7 @@
 package com.lingyuan.simplesql.ui.controller;
 
 import com.lingyuan.simplesql.common.db.TableDictionaryHelper;
+import com.lingyuan.simplesql.common.util.FileUtil;
 import com.lingyuan.simplesql.domain.dto.SqlGeneratorParam;
 import com.lingyuan.simplesql.domain.enums.SQLTypeEnum;
 import com.lingyuan.simplesql.server.impl.SqlGeneratorFactory;
@@ -80,7 +81,7 @@ public class ExcelToSQLViewController extends BaseController {
         useTempBtn.setOnAction(e -> {
             try {
                 // 应用根目录
-                String rootDir = System.getProperty("user.dir");
+                String rootDir = FileUtil.getAppDataDir();
                 File tempFile = new File(rootDir, "temp.xlsx");
 
                 if (!tempFile.exists()) {

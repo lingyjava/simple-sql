@@ -100,6 +100,7 @@ public class ExcelToSQLWebController {
 			// 小文件直接在页面中预览内容，避免用户来回切换
 			String previewContent = null;
 			boolean previewTooLarge = false;
+			String previewError = null;
 			File generatedFile = new File(outputPath);
 			// 约 100KB 以内的文件直接预览
 			final long maxPreviewBytes = 100 * 1024;
@@ -108,15 +109,19 @@ public class ExcelToSQLWebController {
 				if (size <= maxPreviewBytes) {
 					try {
 						previewContent = Files.readString(generatedFile.toPath(), StandardCharsets.UTF_8);
-					} catch (IOException ignored) {
-						// 预览失败不影响下载
+					} catch (IOException e) {
+						// 预览失败时记录错误信息，但不影响下载功能
+						previewError = "预览加载失败: " + e.getMessage();
 					}
 				} else {
 					previewTooLarge = true;
 				}
+			} else {
+				previewError = "生成的文件不存在或无法访问: " + outputPath;
 			}
 			model.addAttribute("previewContent", previewContent);
 			model.addAttribute("previewTooLarge", previewTooLarge);
+			model.addAttribute("previewError", previewError);
 
 			// 对路径进行 URL 编码，避免特殊字符（如 \ 和空格）导致 400 错误
 			String encodedPath = URLEncoder.encode(outputPath, StandardCharsets.UTF_8);

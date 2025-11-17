@@ -11,7 +11,7 @@
 
     <groupId>com.lingyuan</groupId>
     <artifactId>simple-sql-web</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -37,13 +37,25 @@
 
     <build>
         <plugins>
+            <!-- Spring Boot 打包插件 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>3.2.12</version>
                 <configuration>
                     <mainClass>com.lingyuan.simplesql.web.WebApplication</mainClass>
+                    <!-- 自定义jar包名称 - 不包含版本号，便于升版时无需更新启动命令和文档 -->
+                    <finalName>simple-sql-web</finalName>
+                    <!-- 将jar包输出到项目目录 -->
+                    <outputDirectory>${project.basedir}</outputDirectory>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

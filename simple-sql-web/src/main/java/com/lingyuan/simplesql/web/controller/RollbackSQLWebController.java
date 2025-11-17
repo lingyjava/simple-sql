@@ -59,6 +59,7 @@ public class RollbackSQLWebController {
 			// 小文件直接在页面中预览内容
 			String previewContent = null;
 			boolean previewTooLarge = false;
+			String previewError = null;
 			File generatedFile = new File(outputPath);
 			final long maxPreviewBytes = 100 * 1024;
 			if (generatedFile.exists() && generatedFile.isFile()) {
@@ -66,15 +67,19 @@ public class RollbackSQLWebController {
 				if (size <= maxPreviewBytes) {
 					try {
 						previewContent = Files.readString(generatedFile.toPath(), StandardCharsets.UTF_8);
-					} catch (Exception ignored) {
-						// 预览失败不影响下载
+					} catch (Exception e) {
+						// 预览失败时记录错误信息，但不影响下载功能
+						previewError = "预览加载失败: " + e.getMessage();
 					}
 				} else {
 					previewTooLarge = true;
 				}
+			} else {
+				previewError = "生成的文件不存在或无法访问: " + outputPath;
 			}
 			model.addAttribute("previewContent", previewContent);
 			model.addAttribute("previewTooLarge", previewTooLarge);
+			model.addAttribute("previewError", previewError);
 
 			// 与 Excel 页面保持一致，对路径进行 URL 编码，并复用下载接口
 			String encodedPath = URLEncoder.encode(outputPath, StandardCharsets.UTF_8);
