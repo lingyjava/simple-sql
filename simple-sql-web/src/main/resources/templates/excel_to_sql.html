@@ -293,12 +293,13 @@ DELETE FROM `user_info` WHERE `id` = '2' AND `name` = 'Bob';</pre
 								<th style="width: 72px">ID</th>
 								<th>表名</th>
 								<th>库名</th>
+								<th>备注</th>
 								<th style="width: 120px">操作</th>
 							</tr>
 						</thead>
 						<tbody id="dictTbody">
 							<tr>
-								<td colspan="4">加载中...</td>
+								<td colspan="5">加载中...</td>
 							</tr>
 						</tbody>
 					</table>
@@ -441,7 +442,7 @@ DELETE FROM `user_info` WHERE `id` = '2' AND `name` = 'Bob';</pre
 				var tbody = document.getElementById("dictTbody");
 				if (!tbody) return;
 				if (!list || list.length === 0) {
-					tbody.innerHTML = '<tr><td colspan="4">暂无记录</td></tr>';
+					tbody.innerHTML = '<tr><td colspan="5">暂无记录</td></tr>';
 					return;
 				}
 				tbody.innerHTML = "";
@@ -453,6 +454,8 @@ DELETE FROM `user_info` WHERE `id` = '2' AND `name` = 'Bob';</pre
 					tdT.textContent = i.tableName || "";
 					var tdD = document.createElement("td");
 					tdD.textContent = i.databaseName || "";
+					var tdR = document.createElement("td");
+					tdR.textContent = i.remark || "";
 					var tdA = document.createElement("td");
 					var btn = document.createElement("button");
 					btn.className = "btn";
@@ -469,6 +472,7 @@ DELETE FROM `user_info` WHERE `id` = '2' AND `name` = 'Bob';</pre
 					tr.appendChild(tdId);
 					tr.appendChild(tdT);
 					tr.appendChild(tdD);
+					tr.appendChild(tdR);
 					tr.appendChild(tdA);
 					tbody.appendChild(tr);
 				});

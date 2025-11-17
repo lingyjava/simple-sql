@@ -136,12 +136,12 @@ public class ExcelToSQLWebController {
 	public ResponseEntity<Resource> downloadTemplate() {
 		try {
 			// 从 classpath 的 resources 根目录加载模板文件
-			ClassPathResource resource = new ClassPathResource("标准生成模版.xlsx");
+			ClassPathResource resource = new ClassPathResource("StandardTemplate.xlsx");
 			if (!resource.exists()) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 			}
 			return ResponseEntity.ok()
-					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"标准生成模版.xlsx\"")
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"StandardTemplate.xlsx\"")
 					.contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
 					.body(resource);
 		} catch (Exception e) {

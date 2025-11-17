@@ -95,10 +95,10 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <!-- 自定义jar包名称 - 不包含版本号，便于升版时无需更新启动命令和文档 -->
-                    <finalName>simple-sql</finalName>
+                    <finalName>simple-sql-ui</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <!-- 将jar包输出到项目主目录 -->
-                    <outputDirectory>${project.parent.basedir}</outputDirectory>
+                    <outputDirectory>${project.basedir}</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>
