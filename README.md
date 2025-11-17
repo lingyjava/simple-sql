@@ -4,7 +4,7 @@
 
   <img src="./simple-sql-ui/src/main/resources/logo/logo.png" alt="Simple SQL Logo" width="160" height="120">
 
-  <p><b>一个简单易用的 SQL 生成器，本地离线应用
+  <p><b>一个简单易用的 SQL 生成器，基于 Java 实现的本地离线应用
 
 </b></p>
 
