@@ -14,7 +14,7 @@ public class MainApp extends Application {
         // 加载主界面FXML
         Scene scene = new Scene(FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/views/MainView.fxml"))));
         stage.setTitle("Simple SQL");
-        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/logo/logo.ico")))); // 设置窗口图标
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/logo/logo.png")))); // 设置窗口图标
         stage.setScene(scene);
         stage.show();
     }

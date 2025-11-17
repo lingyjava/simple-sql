@@ -38,7 +38,7 @@
 
 ### Web 版（建议使用）
 
-从 Github RELEASE 下载 `simple-sql-web.jar`
+从 [Github RELEASE](https://github.com/lingyjava/simple-sql/releases) 下载 `simple-sql-web.jar`
 
 ```bash
 # 启动命令
@@ -47,7 +47,7 @@ java -jar simple-sql-web.jar
 
 ### 桌面版
 
-从 Github RELEASE 下载 `simple-sql-ui.jar`
+从 [Github RELEASE](https://github.com/lingyjava/simple-sql/releases) 下载 `simple-sql-ui.jar`
 
 ```bash
 # 手动方式运行命令，需替换 javafx-sdk 路径
@@ -71,6 +71,35 @@ mvn spring-boot:run
 cd simple-sql-ui
 mvn javafx:run
 ```
+
+## 功能预览
+
+### 📱 Web 版本
+
+#### 主页
+![Web 主页](./docs/images/web-home.png)
+
+#### Excel 转 SQL
+![Excel 转 SQL](./docs/images/web-excel-to-sql.png)
+
+#### 回退 SQL 生成
+![回退 SQL](./docs/images/web-rollback-sql.png)
+
+#### 表库字典管理
+![表库字典](./docs/images/web-table-dictionary.png)
+
+### 🖥️ 桌面版本
+
+#### 主界面
+
+#### Excel 转 SQL
+![UI Excel 转 SQL](./docs/images/ui-excel-to-sql.png)
+
+#### 回退 SQL 生成
+![UI 回退 SQL](./docs/images/ui-rollback-sql.png)
+
+#### 表库字典管理
+![UI 表库字典](./docs/images/ui-table-dictionary.png)
 
 ## 许可证
 
