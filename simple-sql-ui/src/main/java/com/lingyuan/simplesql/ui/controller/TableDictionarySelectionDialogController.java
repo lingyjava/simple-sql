@@ -22,6 +22,7 @@ public class TableDictionarySelectionDialogController extends BaseController {
     @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, Integer> idColumn;
     @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, String> tableNameColumn;
     @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, String> databaseNameColumn;
+    @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, String> remarkColumn;
     @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, java.sql.Timestamp> createTimeColumn;
 
     private TableDictionaryHelper dbHelper;
@@ -51,6 +52,7 @@ public class TableDictionarySelectionDialogController extends BaseController {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         tableNameColumn.setCellValueFactory(new PropertyValueFactory<>("tableName"));
         databaseNameColumn.setCellValueFactory(new PropertyValueFactory<>("databaseName"));
+        remarkColumn.setCellValueFactory(new PropertyValueFactory<>("remark"));
         createTimeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
         
         // 格式化时间显示

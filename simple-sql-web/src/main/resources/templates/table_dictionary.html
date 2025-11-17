@@ -10,58 +10,101 @@
 					维护常用的表名和库名，便于在生成页面快速选择和自动填充。
 				</p>
 
-				<div class="section">
-					<h2>新增记录</h2>
-					<form class="form" th:action="@{/tables/add}" method="post">
-						<div class="form-row">
-							<label for="tableName">表名</label>
+				<div class="section" style="padding: 12px 12px; margin-bottom: 12px">
+					<div class="section-title" style="margin-bottom: 8px">
+						<strong>新增记录</strong>
+					</div>
+					<form
+						class="form"
+						th:action="@{/tables/add}"
+						method="post"
+						style="font-size: 14px"
+					>
+						<div class="form-row" style="margin-bottom: 6px">
+							<label for="tableName" style="min-width: 100px">表名</label>
 							<input
 								id="tableName"
 								name="tableName"
 								type="text"
 								placeholder="请输入表名"
 								required
+								style="font-size: 14px"
 							/>
 						</div>
-						<div class="form-row">
-							<label for="databaseName">库名（可选）</label>
+						<div class="form-row" style="margin-bottom: 6px">
+							<label for="databaseName" style="min-width: 100px"
+								>库名（可选）</label
+							>
 							<input
 								id="databaseName"
 								name="databaseName"
 								type="text"
 								placeholder="请输入库名（可留空）"
+								style="font-size: 14px"
 							/>
 						</div>
-						<div class="actions">
-							<button type="submit">添加记录</button>
+						<div class="form-row" style="margin-bottom: 6px">
+							<label for="remark" style="min-width: 100px">备注（可选）</label>
+							<input
+								id="remark"
+								name="remark"
+								type="text"
+								placeholder="请输入备注信息（可留空）"
+								style="font-size: 14px"
+							/>
+						</div>
+						<div class="actions" style="margin-top: 8px">
+							<button type="submit" style="font-size: 14px; padding: 8px 16px">
+								添加记录
+							</button>
 						</div>
 					</form>
 				</div>
 
-				<div class="section">
-					<h2>搜索</h2>
-					<form class="form" method="get" th:action="@{/tables}">
-						<div class="form-row">
-							<label for="qTable">表名包含</label>
+				<div class="section" style="padding: 12px 12px; margin-bottom: 12px">
+					<div class="section-title" style="margin-bottom: 8px">
+						<strong>搜索</strong>
+					</div>
+					<form
+						class="form"
+						method="get"
+						th:action="@{/tables}"
+						style="font-size: 14px"
+					>
+						<div class="form-row" style="margin-bottom: 6px">
+							<label for="qTable" style="min-width: 100px">表名包含</label>
 							<input
 								id="qTable"
 								name="tableName"
 								type="text"
 								th:value="${tableName}"
+								style="font-size: 14px"
 							/>
 						</div>
-						<div class="form-row">
-							<label for="qDb">库名包含</label>
+						<div class="form-row" style="margin-bottom: 6px">
+							<label for="qDb" style="min-width: 100px">库名包含</label>
 							<input
 								id="qDb"
 								name="databaseName"
 								type="text"
 								th:value="${databaseName}"
+								style="font-size: 14px"
 							/>
 						</div>
-						<div class="actions">
-							<button type="submit" class="btn">搜索</button>
-							<a class="btn ghost" href="/tables">重置</a>
+						<div class="actions" style="margin-top: 8px">
+							<button
+								type="submit"
+								class="btn"
+								style="font-size: 14px; padding: 8px 16px"
+							>
+								搜索
+							</button>
+							<a
+								class="btn ghost"
+								href="/tables"
+								style="font-size: 14px; padding: 8px 16px"
+								>重置</a
+							>
 						</div>
 					</form>
 				</div>
@@ -81,6 +124,8 @@
 								<th style="width: 72px">ID</th>
 								<th>表名</th>
 								<th>库名</th>
+								<th>备注</th>
+								<th style="width: 160px">创建时间</th>
 								<th style="width: 120px">操作</th>
 							</tr>
 						</thead>
@@ -89,6 +134,12 @@
 								<td th:text="${r.id}">1</td>
 								<td th:text="${r.tableName}">table_x</td>
 								<td th:text="${r.databaseName}">db_y</td>
+								<td th:text="${r.remark}">-</td>
+								<td
+									th:text="${r.createTime != null ? #dates.format(r.createTime, 'yyyy-MM-dd') : '-'}"
+								>
+									2025-01-01
+								</td>
 								<td>
 									<form
 										th:action="@{/tables/delete}"
@@ -105,5 +156,6 @@
 				</div>
 			</div>
 		</div>
+		<div th:replace="~{fragments/layout_footer :: layoutFooter}"></div>
 	</body>
 </html>

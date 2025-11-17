@@ -8,11 +8,147 @@
 				<h1>📊 将 Excel 文件数据转换为 SQL 语句</h1>
 
 				<div class="section">
-					<div><strong>功能说明</strong></div>
-					<ul class="note">
-						<li>Excel 第一行填写表的列名，第二行开始是行数据</li>
-						<li>UPDATE / DELETE 类型时需填写「条件列数」用于 WHERE 条件</li>
-					</ul>
+					<div class="section-title">
+						<strong>功能说明</strong>
+					</div>
+					<div class="feature-note">
+						<div class="feature-row">
+							<span class="feature-index">1</span>
+							<span class="feature-text"
+								>Excel 第一行填写表的列名，第二行开始是行数据</span
+							>
+						</div>
+						<div class="feature-row">
+							<span class="feature-index">2</span>
+							<span class="feature-text">
+								UPDATE / DELETE 类型时需填写「条件列数」，含义是指定前 n 列作为
+								WHERE 条件
+							</span>
+						</div>
+						<div class="feature-row">
+							<span class="feature-index">3</span>
+							<span class="feature-text">UPDATE 未添加条件列数默认使用 1</span>
+						</div>
+						<div class="feature-row">
+							<span class="feature-index">4</span>
+							<span class="feature-text"
+								>DELETE 未添加条件列数默认使用全部列</span
+							>
+						</div>
+						<div class="feature-row">
+							<span class="feature-index">5</span>
+							<span class="feature-text">点击 “咻～～～” 开始生成</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="section section-collapsible">
+					<button
+						type="button"
+						class="section-toggle"
+						id="usageExampleToggle"
+						aria-expanded="false"
+						aria-controls="usageExampleBody"
+						onclick="toggleUsageExample()"
+					>
+						<span class="section-toggle-label">
+							<strong>使用案例</strong>
+							<span class="section-toggle-badge">可展开查看示例</span>
+						</span>
+						<span class="section-toggle-icon" aria-hidden="true">⌄</span>
+					</button>
+					<div id="usageExampleBody" class="section-body is-collapsed">
+						<p class="note">
+							假设表名为 <code>user_info</code>，Excel
+							中的数据如下（第一行为列名，后面为数据行）：
+						</p>
+						<div style="overflow-x: auto">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>id</th>
+										<th>name</th>
+										<th>age</th>
+										<th>status</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>1</td>
+										<td>Alice</td>
+										<td>20</td>
+										<td>ACTIVE</td>
+									</tr>
+									<tr>
+										<td>2</td>
+										<td>Bob</td>
+										<td>30</td>
+										<td>INACTIVE</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+
+						<div style="margin-top: 8px">
+							<div class="note">
+								<strong>SELECT 示例</strong>（语句类型选择
+								<code>SELECT</code>，条件列数可留空）：
+							</div>
+							<pre
+								class="code-block"
+								style="
+									white-space: pre-wrap;
+									word-wrap: break-word;
+									overflow-wrap: break-word;
+								"
+							>
+SELECT * FROM `user_info` WHERE `id` IN ('1', '2') AND `name` IN ('Alice', 'Bob') AND `age` IN ('20', '30') AND `status` IN ('ACTIVE', 'INACTIVE');</pre
+							>
+						</div>
+
+						<div style="margin-top: 8px">
+							<div class="note">
+								<strong>INSERT 示例</strong>（语句类型选择
+								<code>INSERT</code>，条件列数可留空）：
+							</div>
+							<pre
+								class="code-block"
+								style="
+									white-space: pre-wrap;
+									word-wrap: break-word;
+									overflow-wrap: break-word;
+								"
+							>
+INSERT INTO `user_info` (`id`, `name`, `age`, `status`) VALUES 
+('1', 'Alice', '20', 'ACTIVE'), 
+('2', 'Bob', '30', 'INACTIVE');</pre
+							>
+						</div>
+
+						<div style="margin-top: 8px">
+							<div class="note">
+								<strong>UPDATE 示例</strong>（语句类型选择
+								<code>UPDATE</code>，条件列数填写 <code>1</code>，使用第 1 列
+								<code>id</code> 作为 WHERE 条件）：
+							</div>
+							<pre class="code-block">
+UPDATE `user_info` SET `name` = 'Alice', `age` = '20', `status` = 'ACTIVE' WHERE `id` = '1';
+UPDATE `user_info` SET `name` = 'Bob', `age` = '30', `status` = 'INACTIVE' WHERE `id` = '2';</pre
+							>
+						</div>
+
+						<div style="margin-top: 8px">
+							<div class="note">
+								<strong>DELETE 示例</strong>（语句类型选择
+								<code>DELETE</code>，条件列数填写 <code>2</code>，按前两列
+								<code>id</code> + <code>name</code> 删除）：
+							</div>
+							<pre class="code-block">
+DELETE FROM `user_info` WHERE `id` = '1' AND `name` = 'Alice';
+DELETE FROM `user_info` WHERE `id` = '2' AND `name` = 'Bob';</pre
+							>
+						</div>
+					</div>
 				</div>
 
 				<div th:if="${error}" class="error" th:text="${error}">发生错误</div>
@@ -83,7 +219,7 @@
 						th:replace="~{fragments/file_upload :: uploadField('file','file','.xls,.xlsx','上传 Excel 文件','选择 Excel 文件')}"
 					></div>
 					<div class="actions">
-						<button type="submit">咻～～～（生成SQL）</button>
+						<button type="submit">咻～～～</button>
 						<a class="btn secondary" th:href="@{/excel/template}"
 							>下载标准模板</a
 						>
@@ -97,13 +233,13 @@
 						><span th:text="${outputPath}">/path/to/output.sql</span>
 					</div>
 					<div style="margin-top: 8px">
-						<a
-							class="btn"
-							th:if="${downloadUrl}"
-							th:href="${downloadUrl}"
+						<a class="btn" th:if="${downloadUrl}" th:href="${downloadUrl}"
 							>下载生成的 SQL 文件</a
 						>
 					</div>
+				</div>
+
+				<div th:if="${outputPath}" class="result">
 					<div th:if="${previewContent}" style="margin-top: 12px">
 						<div><strong>预览：</strong></div>
 						<pre
@@ -112,12 +248,9 @@
 							th:text="${previewContent}"
 						></pre>
 					</div>
-					<div
-						th:if="${previewTooLarge}"
-						class="note"
-						style="margin-top: 8px"
-					>
-						生成内容较大，为避免页面卡顿，请点击上方“下载生成的 SQL 文件”后使用本地编辑器查看。
+					<div th:if="${previewTooLarge}" class="note" style="margin-top: 8px">
+						生成内容较大，为避免页面卡顿，请点击上方“下载生成的 SQL
+						文件”后使用本地编辑器查看。
 					</div>
 				</div>
 			</div>
@@ -172,6 +305,7 @@
 				</div>
 			</div>
 		</div>
+		<div th:replace="~{fragments/layout_footer :: layoutFooter}"></div>
 
 		<script>
 			function toggleWhereCount() {
@@ -229,6 +363,21 @@
 					input && input.files && input.files.length ? input.files[0].name : "";
 				var span = document.getElementById("fileNameDisplay");
 				if (span) span.textContent = name ? "已选择：" + name : "";
+			}
+			function toggleUsageExample() {
+				var body = document.getElementById("usageExampleBody");
+				var toggle = document.getElementById("usageExampleToggle");
+				if (!body || !toggle) return;
+				var expanded = toggle.getAttribute("aria-expanded") === "true";
+				if (expanded) {
+					toggle.setAttribute("aria-expanded", "false");
+					toggle.classList.remove("is-open");
+					body.classList.add("is-collapsed");
+				} else {
+					toggle.setAttribute("aria-expanded", "true");
+					toggle.classList.add("is-open");
+					body.classList.remove("is-collapsed");
+				}
 			}
 			// 字典选择器
 			var __dictCache = null;

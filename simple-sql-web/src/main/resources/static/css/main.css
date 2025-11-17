@@ -12,6 +12,7 @@ body {
 	margin: 0;
 	color: #0f172a;
 	background: #f6f7fb;
+	padding-bottom: 64px; /* 给固定底部留出空间，避免内容被遮挡 */
 }
 
 /* App shell */
@@ -168,6 +169,7 @@ button {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
+	font-size: 14px;
 	font-weight: 600;
 	box-shadow: 0 8px 20px rgba(22, 119, 255, 0.25);
 	transition: transform 0.05s ease, box-shadow 0.15s ease, background 0.15s ease;
@@ -304,4 +306,133 @@ button:hover {
 	max-width: 720px;
 	width: 100%;
 	padding: 16px;
+}
+
+/* Footer */
+.app-footer {
+	border-top: 1px solid #e5e7eb;
+	background: #f9fafb;
+	color: #6b7280;
+	font-size: 13px;
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 50;
+}
+.app-footer-inner {
+	max-width: 1040px;
+	margin: 0 auto;
+	padding: 10px 20px 18px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px 16px;
+	justify-content: center;
+}
+
+/* Section & feature description */
+.section-title {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 6px;
+	font-weight: 600;
+}
+
+.feature-note {
+	padding: 0;
+	background: transparent;
+	border-radius: 0;
+	border: none;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	font-size: 13px;
+	color: #4b5563;
+}
+
+.feature-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+}
+
+.feature-index {
+	flex-shrink: 0;
+	width: 18px;
+	height: 18px;
+	border-radius: 999px;
+	background: #eef2ff;
+	color: #4f46e5;
+	font-size: 11px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 1px;
+}
+
+.feature-text {
+	line-height: 1.5;
+}
+
+/* Collapsible section for examples */
+.section-collapsible {
+	margin-top: 18px;
+}
+
+.section-toggle {
+	width: 100%;
+	border: none;
+	background: transparent;
+	padding: 0;
+	border-radius: 0;
+	box-shadow: none;
+	margin: 0 0 8px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font: inherit;
+	color: inherit;
+	cursor: pointer;
+}
+
+.section-toggle:hover {
+	background: transparent;
+	box-shadow: none;
+	transform: none;
+}
+
+.section-toggle-label {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.section-toggle-badge {
+	padding: 2px 8px;
+	border-radius: 999px;
+	font-size: 11px;
+	background: #eef2ff;
+	color: #4f46e5;
+}
+
+.section-toggle-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	border-radius: 999px;
+	border: 1px solid #e5e7eb;
+	font-size: 11px;
+	color: #6b7280;
+	transition: transform 0.15s ease;
+}
+
+.section-toggle.is-open .section-toggle-icon {
+	transform: rotate(180deg);
+}
+
+.section-body.is-collapsed {
+	display: none;
 }

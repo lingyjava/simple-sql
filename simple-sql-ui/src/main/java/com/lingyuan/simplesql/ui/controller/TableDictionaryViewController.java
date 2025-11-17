@@ -14,6 +14,7 @@ public class TableDictionaryViewController extends BaseController {
 
     @FXML private TextField tableNameField;
     @FXML private TextField databaseNameField;
+    @FXML private TextField remarkField;
     @FXML private Button addBtn;
     @FXML private Button clearBtn;
     
@@ -26,6 +27,7 @@ public class TableDictionaryViewController extends BaseController {
     @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, Integer> idColumn;
     @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, String> tableNameColumn;
     @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, String> databaseNameColumn;
+    @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, String> remarkColumn;
     @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, java.sql.Timestamp> createTimeColumn;
     @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, java.sql.Timestamp> updateTimeColumn;
     @FXML private TableColumn<TableDictionaryHelper.TableDictionaryInfo, Void> actionColumn;
@@ -54,6 +56,7 @@ public class TableDictionaryViewController extends BaseController {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         tableNameColumn.setCellValueFactory(new PropertyValueFactory<>("tableName"));
         databaseNameColumn.setCellValueFactory(new PropertyValueFactory<>("databaseName"));
+        remarkColumn.setCellValueFactory(new PropertyValueFactory<>("remark"));
         createTimeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
         updateTimeColumn.setCellValueFactory(new PropertyValueFactory<>("updateTime"));
         
@@ -141,6 +144,7 @@ public class TableDictionaryViewController extends BaseController {
     private void addRecord() {
         String tableName = tableNameField.getText().trim();
         String databaseName = databaseNameField.getText().trim();
+        String remark = remarkField.getText().trim();
         
         if (tableName.isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "表名不能为空", "请输入表名", null);
@@ -148,7 +152,11 @@ public class TableDictionaryViewController extends BaseController {
         }
         
         try {
-            dbHelper.addTableDictionary(tableName, databaseName);
+            dbHelper.addTableDictionary(
+                tableName, 
+                databaseName.isEmpty() ? null : databaseName,
+                remark.isEmpty() ? null : remark
+            );
             showAlert(Alert.AlertType.INFORMATION, "添加成功", "记录已成功添加到数据库", null);
             clearFields();
             loadData();
@@ -179,6 +187,7 @@ public class TableDictionaryViewController extends BaseController {
     private void clearFields() {
         tableNameField.clear();
         databaseNameField.clear();
+        remarkField.clear();
     }
 
     private void searchRecords() {

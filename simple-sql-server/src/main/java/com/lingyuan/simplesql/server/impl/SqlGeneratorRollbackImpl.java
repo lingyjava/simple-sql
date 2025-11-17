@@ -69,21 +69,15 @@ public class SqlGeneratorRollbackImpl implements SqlGenerator {
         StringBuilder script = new StringBuilder();
         
         // 添加头部注释
-        script.append("-- SQL回退脚本\n");
-        script.append("-- 生成时间: ").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n");
-        script.append("-- 原始SQL文件: ").append(param.getFilePath()).append("\n");
+        script.append("-- ==========================================\n");
+        script.append("-- 时间: ").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n");
         script.append("-- 可回退语句数量: ").append(statements.size()).append("\n");
-        script.append("-- 注意: 仅支持INSERT语句，其他语句类型会被忽略\n\n");
 
         if (statements.isEmpty()) {
             script.append("-- 未找到可回退的SQL语句\n");
-            script.append("-- 支持的语句类型: INSERT\n");
-            script.append("-- 忽略的语句类型: SELECT, DELETE, DROP, UPDATE, ALTER TABLE, CREATE TABLE\n");
         } else {
             // 按语句类型分组
             script.append("-- ==========================================\n");
-            script.append("-- 可回退的SQL语句\n");
-            script.append("-- ==========================================\n\n");
             
             for (int i = 0; i < statements.size(); i++) {
                 SqlStatement statement = statements.get(i);
@@ -108,14 +102,6 @@ public class SqlGeneratorRollbackImpl implements SqlGenerator {
                 script.append("\n");
             }
         }
-        
-        // 添加使用说明
-        script.append("-- ==========================================\n");
-        script.append("-- 使用说明\n");
-        script.append("-- ==========================================\n");
-        script.append("-- 1. 执行前请备份数据库\n");
-        script.append("-- 2. 仔细检查每个回退语句的正确性\n");
-        script.append("-- 3. 建议在测试环境中先验证回退脚本\n");
         
         return script.toString();
     }

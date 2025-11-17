@@ -6,10 +6,98 @@
 		<div class="container">
 			<div class="card">
 				<h1>🧯 生成 SQL 回退脚本</h1>
-				<p class="muted">
-					上传包含 INSERT/UPDATE/DELETE 的 SQL
-					文件，自动生成回退脚本，便于回滚。
-				</p>
+
+				<div class="section">
+					<div class="section-title">
+						<strong>功能说明</strong>
+					</div>
+					<div class="feature-note">
+						<div class="feature-row">
+							<span class="feature-index">1</span>
+							<span class="feature-text">上传包含 INSERT 语句的 SQL 文件</span>
+						</div>
+						<div class="feature-row">
+							<span class="feature-index">2</span>
+							<span class="feature-text">
+								系统会自动解析 INSERT 语句并生成对应的 DELETE 回退脚本
+							</span>
+						</div>
+						<div class="feature-row">
+							<span class="feature-index">3</span>
+							<span class="feature-text"
+								>其他语句类型（UPDATE、DELETE 等）会被忽略</span
+							>
+						</div>
+						<div class="feature-row">
+							<span class="feature-index">4</span>
+							<span class="feature-text"
+								>生成的回退脚本可用于回滚数据库操作</span
+							>
+						</div>
+						<div class="feature-row">
+							<span class="feature-index">5</span>
+							<span class="feature-text">点击 "生成回退脚本" 开始生成</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="section section-collapsible">
+					<button
+						type="button"
+						class="section-toggle"
+						id="usageExampleToggle"
+						aria-expanded="false"
+						aria-controls="usageExampleBody"
+						onclick="toggleUsageExample()"
+					>
+						<span class="section-toggle-label">
+							<strong>使用案例</strong>
+							<span class="section-toggle-badge">可展开查看示例</span>
+						</span>
+						<span class="section-toggle-icon" aria-hidden="true">⌄</span>
+					</button>
+					<div id="usageExampleBody" class="section-body is-collapsed">
+						<p class="note">假设您的 SQL 文件中包含以下 INSERT 语句：</p>
+
+						<div style="margin-top: 8px">
+							<div class="note"><strong>原始 INSERT 语句</strong>：</div>
+							<pre
+								class="code-block"
+								style="
+									white-space: pre-wrap;
+									word-wrap: break-word;
+									overflow-wrap: break-word;
+								"
+							>
+INSERT INTO `user_info` (`id`, `name`, `age`, `status`) VALUES 
+('1', 'Alice', '20', 'ACTIVE'), 
+('2', 'Bob', '30', 'INACTIVE');</pre
+							>
+						</div>
+
+						<div style="margin-top: 8px">
+							<div class="note"><strong>生成的 DELETE 回退脚本</strong>：</div>
+							<pre
+								class="code-block"
+								style="
+									white-space: pre-wrap;
+									word-wrap: break-word;
+									overflow-wrap: break-word;
+								"
+							>
+DELETE FROM `user_info` WHERE `id` = '1' AND `name` = 'Alice' AND `age` = '20' AND `status` = 'ACTIVE';
+DELETE FROM `user_info` WHERE `id` = '2' AND `name` = 'Bob' AND `age` = '30' AND `status` = 'INACTIVE';</pre
+							>
+						</div>
+
+						<div style="margin-top: 12px">
+							<p class="note">
+								💡 <strong>提示</strong>：生成的 DELETE 语句使用所有列作为 WHERE
+								条件，确保精确匹配要回滚的数据行。
+							</p>
+						</div>
+					</div>
+				</div>
 
 				<div th:if="${error}" class="error" th:text="${error}">发生错误</div>
 				<div th:if="${success}" class="success" th:text="${success}">
@@ -40,6 +128,9 @@
 							>下载回退脚本</a
 						>
 					</div>
+				</div>
+
+				<div th:if="${outputPath}" class="result">
 					<div th:if="${previewContent}" style="margin-top: 12px">
 						<div><strong>预览：</strong></div>
 						<pre
@@ -48,15 +139,30 @@
 							th:text="${previewContent}"
 						></pre>
 					</div>
-					<div
-						th:if="${previewTooLarge}"
-						class="note"
-						style="margin-top: 8px"
-					>
+					<div th:if="${previewTooLarge}" class="note" style="margin-top: 8px">
 						生成内容较大，为避免页面卡顿，请点击上方“下载回退脚本”后使用本地编辑器查看。
 					</div>
 				</div>
 			</div>
 		</div>
+		<div th:replace="~{fragments/layout_footer :: layoutFooter}"></div>
+
+		<script>
+			function toggleUsageExample() {
+				var body = document.getElementById("usageExampleBody");
+				var toggle = document.getElementById("usageExampleToggle");
+				if (!body || !toggle) return;
+				var expanded = toggle.getAttribute("aria-expanded") === "true";
+				if (expanded) {
+					toggle.setAttribute("aria-expanded", "false");
+					toggle.classList.remove("is-open");
+					body.classList.add("is-collapsed");
+				} else {
+					toggle.setAttribute("aria-expanded", "true");
+					toggle.classList.add("is-open");
+					body.classList.remove("is-collapsed");
+				}
+			}
+		</script>
 	</body>
 </html>

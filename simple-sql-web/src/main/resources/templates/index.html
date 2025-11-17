@@ -7,6 +7,9 @@
 			<div class="card">
 				<h1>🚀 控制台</h1>
 				<p class="muted">支持 Excel 转 SQL、回退脚本生成，以及表库字典管理。</p>
+				<p class="muted">执行SQL语句前请仔细检查正确性</p>
+				<p class="muted">建议在测试环境中先验证SQL语句</p>
+
 				<div class="section">
 					<div class="actions">
 						<a class="btn" href="/excel">Excel 转 SQL</a>
@@ -16,5 +19,6 @@
 				</div>
 			</div>
 		</div>
+		<div th:replace="~{fragments/layout_footer :: layoutFooter}"></div>
 	</body>
 </html>

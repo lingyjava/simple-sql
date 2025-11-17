@@ -46,14 +46,19 @@
                                     <PropertyValueFactory property="id"/>
                                 </cellValueFactory>
                             </TableColumn>
-                            <TableColumn fx:id="tableNameColumn" text="表名" prefWidth="200">
+                            <TableColumn fx:id="tableNameColumn" text="表名" prefWidth="150">
                                 <cellValueFactory>
                                     <PropertyValueFactory property="tableName"/>
                                 </cellValueFactory>
                             </TableColumn>
-                            <TableColumn fx:id="databaseNameColumn" text="库名" prefWidth="200">
+                            <TableColumn fx:id="databaseNameColumn" text="库名" prefWidth="150">
                                 <cellValueFactory>
                                     <PropertyValueFactory property="databaseName"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn fx:id="remarkColumn" text="备注" prefWidth="150">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="remark"/>
                                 </cellValueFactory>
                             </TableColumn>
                             <TableColumn fx:id="createTimeColumn" text="创建时间" prefWidth="150">

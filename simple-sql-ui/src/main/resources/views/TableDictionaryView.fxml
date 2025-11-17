@@ -38,6 +38,10 @@
                         <Label text="库名:"/>
                         <TextField fx:id="databaseNameField" promptText="请输入库名（可选）" prefWidth="200"/>
                     </HBox>
+                    <HBox spacing="20" alignment="CENTER_LEFT">
+                        <Label text="备注:"/>
+                        <TextField fx:id="remarkField" promptText="请输入备注（可选）" prefWidth="200"/>
+                    </HBox>
                     <HBox spacing="10">
                         <Button text="添加" fx:id="addBtn" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
                         <Button text="清空" fx:id="clearBtn" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
@@ -71,14 +75,19 @@
                                     <PropertyValueFactory property="id"/>
                                 </cellValueFactory>
                             </TableColumn>
-                            <TableColumn fx:id="tableNameColumn" text="表名" prefWidth="200">
+                            <TableColumn fx:id="tableNameColumn" text="表名" prefWidth="150">
                                 <cellValueFactory>
                                     <PropertyValueFactory property="tableName"/>
                                 </cellValueFactory>
                             </TableColumn>
-                            <TableColumn fx:id="databaseNameColumn" text="库名" prefWidth="200">
+                            <TableColumn fx:id="databaseNameColumn" text="库名" prefWidth="150">
                                 <cellValueFactory>
                                     <PropertyValueFactory property="databaseName"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn fx:id="remarkColumn" text="备注" prefWidth="150">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="remark"/>
                                 </cellValueFactory>
                             </TableColumn>
                             <TableColumn fx:id="createTimeColumn" text="创建时间" prefWidth="150">

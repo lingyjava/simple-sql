@@ -28,6 +28,7 @@ public class TableDictionaryHelper {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 table_name TEXT NOT NULL,
                 database_name TEXT,
+                remark TEXT,
                 create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
@@ -38,9 +39,9 @@ public class TableDictionaryHelper {
     /**
      * 添加表名和库名
      */
-    public void addTableDictionary(String tableName, String databaseName) {
-        String sql = "INSERT INTO table_dictionary_info (table_name, database_name) VALUES (?, ?)";
-        dbHelper.executeDML(sql, tableName, databaseName);
+    public void addTableDictionary(String tableName, String databaseName, String remark) {
+        String sql = "INSERT INTO table_dictionary_info (table_name, database_name, remark) VALUES (?, ?, ?)";
+        dbHelper.executeDML(sql, tableName, databaseName, remark);
     }
     
     /**
@@ -55,13 +56,14 @@ public class TableDictionaryHelper {
      * 获取所有表名和库名
      */
     public List<TableDictionaryInfo> getAllTableDictionary() {
-        String sql = "SELECT id, table_name, database_name, create_time, update_time FROM table_dictionary_info ORDER BY create_time DESC";
+        String sql = "SELECT id, table_name, database_name, remark, create_time, update_time FROM table_dictionary_info ORDER BY create_time DESC";
         return dbHelper.query(sql, rs -> {
             try {
                 TableDictionaryInfo info = new TableDictionaryInfo();
                 info.setId(rs.getInt("id"));
                 info.setTableName(rs.getString("table_name"));
                 info.setDatabaseName(rs.getString("database_name"));
+                info.setRemark(rs.getString("remark"));
                 info.setCreateTime(rs.getTimestamp("create_time"));
                 info.setUpdateTime(rs.getTimestamp("update_time"));
                 return info;
@@ -75,13 +77,14 @@ public class TableDictionaryHelper {
      * 根据表名搜索
      */
     public List<TableDictionaryInfo> searchByTableName(String tableName) {
-        String sql = "SELECT id, table_name, database_name, create_time, update_time FROM table_dictionary_info WHERE table_name LIKE ? ORDER BY create_time DESC";
+        String sql = "SELECT id, table_name, database_name, remark, create_time, update_time FROM table_dictionary_info WHERE table_name LIKE ? ORDER BY create_time DESC";
         return dbHelper.query(sql, rs -> {
             try {
                 TableDictionaryInfo info = new TableDictionaryInfo();
                 info.setId(rs.getInt("id"));
                 info.setTableName(rs.getString("table_name"));
                 info.setDatabaseName(rs.getString("database_name"));
+                info.setRemark(rs.getString("remark"));
                 info.setCreateTime(rs.getTimestamp("create_time"));
                 info.setUpdateTime(rs.getTimestamp("update_time"));
                 return info;
@@ -95,13 +98,14 @@ public class TableDictionaryHelper {
      * 根据库名搜索
      */
     public List<TableDictionaryInfo> searchByDatabaseName(String databaseName) {
-        String sql = "SELECT id, table_name, database_name, create_time, update_time FROM table_dictionary_info WHERE database_name LIKE ? ORDER BY create_time DESC";
+        String sql = "SELECT id, table_name, database_name, remark, create_time, update_time FROM table_dictionary_info WHERE database_name LIKE ? ORDER BY create_time DESC";
         return dbHelper.query(sql, rs -> {
             try {
                 TableDictionaryInfo info = new TableDictionaryInfo();
                 info.setId(rs.getInt("id"));
                 info.setTableName(rs.getString("table_name"));
                 info.setDatabaseName(rs.getString("database_name"));
+                info.setRemark(rs.getString("remark"));
                 info.setCreateTime(rs.getTimestamp("create_time"));
                 info.setUpdateTime(rs.getTimestamp("update_time"));
                 return info;
@@ -118,6 +122,7 @@ public class TableDictionaryHelper {
         private int id;
         private String tableName;
         private String databaseName;
+        private String remark;
         private java.sql.Timestamp createTime;
         private java.sql.Timestamp updateTime;
         
@@ -130,6 +135,9 @@ public class TableDictionaryHelper {
         
         public String getDatabaseName() { return databaseName; }
         public void setDatabaseName(String databaseName) { this.databaseName = databaseName; }
+        
+        public String getRemark() { return remark; }
+        public void setRemark(String remark) { this.remark = remark; }
         
         public java.sql.Timestamp getCreateTime() { return createTime; }
         public void setCreateTime(java.sql.Timestamp createTime) { this.createTime = createTime; }

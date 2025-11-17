@@ -49,13 +49,18 @@ public class TableDictionaryWebController {
 	public String addTableDictionary(
 			@RequestParam("tableName") String tableName,
 			@RequestParam(value = "databaseName", required = false) String databaseName,
+			@RequestParam(value = "remark", required = false) String remark,
 			Model model
 	) {
 		if (!StringUtils.hasText(tableName)) {
 			model.addAttribute("error", "表名不能为空");
 			return "redirect:/tables";
 		}
-		db.addTableDictionary(tableName.trim(), StringUtils.hasText(databaseName) ? databaseName.trim() : null);
+		db.addTableDictionary(
+			tableName.trim(), 
+			StringUtils.hasText(databaseName) ? databaseName.trim() : null,
+			StringUtils.hasText(remark) ? remark.trim() : null
+		);
 		return "redirect:/tables";
 	}
 
@@ -75,6 +80,8 @@ public class TableDictionaryWebController {
 			m.put("id", i.getId());
 			m.put("tableName", i.getTableName());
 			m.put("databaseName", i.getDatabaseName());
+			m.put("remark", i.getRemark());
+			m.put("createTime", i.getCreateTime());
 			return m;
 		}).collect(Collectors.toList());
 	}
@@ -94,6 +101,8 @@ public class TableDictionaryWebController {
 		m.put("id", first.getId());
 		m.put("tableName", first.getTableName());
 		m.put("databaseName", first.getDatabaseName());
+		m.put("remark", first.getRemark());
+		m.put("createTime", first.getCreateTime());
 		return ResponseEntity.ok(m);
 	}
 }
